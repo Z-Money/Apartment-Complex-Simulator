@@ -4,6 +4,11 @@
 # Log file
 *.log
 
+# Dev folders
+.idea/
+.vscode/
+*.iml
+
 # BlueJ files
 *.ctxt
 
