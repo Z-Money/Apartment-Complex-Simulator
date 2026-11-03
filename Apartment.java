@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public abstract class Apartment {
     private int floorNumber;
     private int roomNumber;
@@ -16,12 +18,12 @@ public abstract class Apartment {
 
     public boolean isOccupied() {
         // TODO: Figure out how to determine isOccupied
-        return null;
+        return false;
     }
 
     public int getResidentCount() {
         // TODO: Figure out how to determine this
-        return null;
+        return 0;
     }
 
     public abstract int getCapacity();
