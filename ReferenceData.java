@@ -51,7 +51,7 @@ public class ReferenceData {
     }
 
     public ResidentType findResidentType(String typeName) {
-        for (int i = 0; i < residentTypes.size() - 1; i++) {
+        for (int i = 0; i < residentTypes.size(); i++) {
             if (residentTypes.get(i).getTypeName().equals(typeName)) {
                 return residentTypes.get(i);
             }
@@ -60,9 +60,9 @@ public class ReferenceData {
     }
 
     public double getUtilityPrice(String utilityName) {
-        for (int i = 0; i < utilityNames.length - 1; i++) {
+        for (int i = 0; i < utilityNames.length; i++) {
             if (utilityNames[i].equals(utilityName)) {
-                return amenityCosts[i];
+                return utilityPrices[i];
             }
         }
         return -1;
