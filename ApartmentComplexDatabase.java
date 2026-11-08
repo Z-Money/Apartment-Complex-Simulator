@@ -14,116 +14,18 @@ public class ApartmentComplexDatabase {
             System.out.println(rd.getAmenityNames()[0]);
             System.out.println(rd.getResidentTypes().get(1).getTypeName());
             System.out.println(rd.getDefaultDistribution()[0]);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println(rd.getUtilityPrice("Water"));
+        } catch (InvalidConfigurationException e) {
+            // TODO: Connect to GUI
         }
     }
 
-    public ReferenceData readReferenceData(String fileName) throws FileNotFoundException {
-        File referenceDataFile = new File(fileName);
-        try {
-            Scanner scan = new Scanner(referenceDataFile);
-            if (!scan.hasNextLine()) throw new InvalidConfigurationException("Empty referenceData file", "referenceDataFile");
-            else {
-                double baseCost = 0, baselineUsage = 0;
-                ArrayList<String> utilityNames = new ArrayList<>(), amenityNames = new ArrayList<>();
-                ArrayList<Double> utilityPrices = new ArrayList<>(), amenityChances = new ArrayList<>(), amenityQualityContributions = new ArrayList<>(), amenityCost = new ArrayList<>();
-                ArrayList<ResidentType> residentTypes = new ArrayList<>();
-                ArrayList<Integer> floorLimits = new ArrayList<>(), roomLimits = new ArrayList<>(), defaultDistribution = new ArrayList<>();
-                int maximumNameLength = 0, defaultFloors = 0, defaultRoomsPerFloor = 0, defaultApartmentType = 0, defaultOccupancyPercent = 0;
-                String defaultComplexName = "";
-                while (scan.hasNextLine()) {
-                    String[] line = scan.nextLine().trim().split(",");
-                    switch(line[0]) {
-                        case "BaseCost" -> baseCost = Double.parseDouble(line[1]);
-                        case "BaselineUsage" -> baselineUsage = Double.parseDouble(line[1]);
-                        case "Utility" -> {utilityNames.add(line[1]); utilityPrices.add(Double.parseDouble(line[2]));}
-                        case "FloorLimits" -> {floorLimits.add(Integer.parseInt(line[1])); floorLimits.add(Integer.parseInt(line[2]));}
-                        case "RoomLimits" -> {roomLimits.add(Integer.parseInt(line[1])); roomLimits.add(Integer.parseInt(line[2]));}
-                        case "MaximumNameLength" -> maximumNameLength = Integer.parseInt(line[1]);
-                        case "DefaultFloors" -> defaultFloors = Integer.parseInt(line[1]);
-                        case "DefaultRoomsPerFloor" -> defaultRoomsPerFloor = Integer.parseInt(line[1]);
-                        case "DefaultApartmentType" -> defaultApartmentType = Integer.parseInt(line[1]);
-                        case "DefaultOccupancyPercent" -> defaultOccupancyPercent = Integer.parseInt(line[1]);
-                        case "DefaultComplexName" -> defaultComplexName = line[1];
-                        case "DefaultDistribution" -> {defaultDistribution.add(Integer.parseInt(line[1])); defaultDistribution.add(Integer.parseInt(line[2])); defaultDistribution.add(Integer.parseInt(line[3])); defaultDistribution.add(Integer.parseInt(line[4]));}
-                        case "ResidentType" -> residentTypes.add(parseResidentLine(line));
-                        case "Amenity" -> {amenityNames.add(line[1]); amenityChances.add(Double.parseDouble(line[2])); amenityQualityContributions.add(Double.parseDouble(line[3])); amenityCost.add(Double.parseDouble(line[4]));}
-                        default -> throw new InvalidConfigurationException("Invalid " + line[0], line[0]);
-                    }
-                }
-                String[] utilityNamesArray = new String[utilityNames.size()];
-                for (int i = 0; i < utilityNames.size(); i++) {
-                    utilityNamesArray[i] = utilityNames.get(i);
-                }
-
-                double[] utilityPricesArray = new double[utilityPrices.size()];
-                for (int i = 0; i < utilityPrices.size(); i++) {
-                    utilityPricesArray[i] = utilityPrices.get(i);
-                }
-
-                String[] amenityNamesArray = new String[amenityNames.size()];
-                for (int i = 0; i < amenityNames.size(); i++) {
-                    amenityNamesArray[i] = amenityNames.get(i);
-                }
-
-                double[] amenityChancesArray = new double[amenityChances.size()];
-                for (int i = 0; i < amenityChances.size(); i++) {
-                    amenityChancesArray[i] = amenityChances.get(i);
-                }
-
-                double[] amenityQualityContributionsArray = new double[amenityQualityContributions.size()];
-                for (int i = 0; i < amenityQualityContributions.size(); i++) {
-                    amenityQualityContributionsArray[i] = amenityQualityContributions.get(i);
-                }
-
-                double[] amenityCostArray = new double[amenityCost.size()];
-                for (int i = 0; i < amenityCost.size(); i++) {
-                    amenityCostArray[i] = amenityCost.get(i);
-                }
-
-                int[] floorLimitsArray = new int[floorLimits.size()];
-                for (int i = 0; i < floorLimits.size(); i++) {
-                    floorLimitsArray[i] = floorLimits.get(i);
-                }
-
-                int[] roomLimitsArray = new int[roomLimits.size()];
-                for (int i = 0; i < roomLimits.size(); i++) {
-                    roomLimitsArray[i] = roomLimits.get(i);
-                }
-
-                int[] defaultDistributionArray = new int[defaultDistribution.size()];
-                for (int i = 0; i < defaultDistribution.size(); i++) {
-                    defaultDistributionArray[i] = defaultDistribution.get(i);
-                }
-
-                return new ReferenceData(
-                        baseCost,
-                        baselineUsage,
-                        utilityNamesArray,
-                        utilityPricesArray,
-                        residentTypes,
-                        amenityNamesArray,
-                        amenityChancesArray,
-                        amenityQualityContributionsArray,
-                        amenityCostArray,
-                        floorLimitsArray,
-                        roomLimitsArray,
-                        maximumNameLength,
-                        defaultFloors,
-                        defaultRoomsPerFloor,
-                        defaultApartmentType,
-                        defaultOccupancyPercent,
-                        defaultComplexName,
-                        defaultDistributionArray
-                );
-            }
+    public ReferenceData readReferenceData(String fileName) throws InvalidConfigurationException {
+        try (Scanner scan = new Scanner(new File(fileName))) {
+            if (!scan.hasNextLine()) throw new InvalidConfigurationException("Empty reference data file", "referenceDataFile");
+            return handleLines(scan);
         } catch (FileNotFoundException e) {
-            // TODO: Do smth with the GUI
-            return null;
-        } catch (InvalidConfigurationException e) {
-            // TODO: Do smth with the GUI
-            return null;
+            throw new InvalidConfigurationException("Missing file: " + fileName, "referenceDataFile");
         }
     }
 
@@ -139,6 +41,56 @@ public class ApartmentComplexDatabase {
             return new ResidentType(typeName, noiseTolerance, amenityWeight, costSensitivity, utilityUsageRate, moveOutSensitivity, generationChance);
         } catch (NumberFormatException e) {
             throw new InvalidConfigurationException("Invalid resident type value: " + e.getLocalizedMessage(), "residentType");
+        }
+    }
+
+    public ReferenceData handleLines(Scanner scan) throws InvalidConfigurationException {
+        double baseCost = 0, baselineUsage = 0;
+        String[] utilityNames = new String[2], amenityNames = new String[4];
+        double[] utilityPrices = new double[2], amenityChances = new double[4], amenityCost = new double[4], amenityQualityContribution = new double[4];
+        int[] floorLimits = new int[2], roomLimits = new int[2], defaultDistribution = new int[4];
+        int maximumNameLength = 0, defaultFloors = 0, defaultRoomsPerFloor = 0, defaultApartmentType = 0, defaultOccupancyPercent = 0, row = 0, amenityIndex = 0, utilityIndex = 0;
+        String defaultComplexName = "";
+        ArrayList<ResidentType> residentTypes = new ArrayList<>();
+        try {
+            while (scan.hasNextLine()) {
+                row++;
+                String[] line = scan.nextLine().trim().split(",");
+                switch (line[0]) {
+                    case "BaseCost" -> baseCost = Double.parseDouble(line[1]);
+                    case "BaselineUsage" -> baselineUsage = Double.parseDouble(line[1]);
+                    case "Utility" -> utilityIndex = parseUtilityLine(line, utilityNames, utilityPrices, utilityIndex);
+                    case "FloorLimits" -> {for (int i = 0; i < 2; i++) floorLimits[i] = Integer.parseInt(line[i+1]);}
+                    case "RoomLimits" -> {for (int i = 0; i < 2; i++) roomLimits[i] = Integer.parseInt(line[i+1]);}
+                    case "MaximumNameLength" -> maximumNameLength = Integer.parseInt(line[1]);
+                    case "DefaultFloors" -> defaultFloors = Integer.parseInt(line[1]);
+                    case "DefaultRoomsPerFloor" -> defaultRoomsPerFloor = Integer.parseInt(line[1]);
+                    case "DefaultApartmentType" -> defaultApartmentType = Integer.parseInt(line[1]);
+                    case "DefaultOccupancyPercent" -> defaultOccupancyPercent = Integer.parseInt(line[1]);
+                    case "DefaultComplexName" -> defaultComplexName = line[1];
+                    case "DefaultDistribution" -> {for (int i = 0; i < 4; i++) defaultDistribution[i] = Integer.parseInt(line[i+1]);}
+                    case "ResidentType" -> residentTypes.add(parseResidentLine(line));
+                    case "Amenity" -> {amenityNames[amenityIndex] = line[1]; amenityChances[amenityIndex] = Double.parseDouble(line[2]); amenityQualityContribution[amenityIndex] = Double.parseDouble(line[3]); amenityCost[amenityIndex] = Double.parseDouble(line[4]); amenityIndex++;
+                    }
+                    default -> throw new InvalidConfigurationException("Invalid " + line[0] + " value on line " + row, "referenceDataFile");
+                }
+            }
+        }  catch (NumberFormatException e) {
+            throw new InvalidConfigurationException("Invalid setting on row " + row + " in reference data file", "referenceDataFile");
+        }
+        return new ReferenceData(baseCost,baselineUsage,utilityNames,utilityPrices,residentTypes,amenityNames,
+                amenityChances,amenityQualityContribution,amenityCost,floorLimits,roomLimits,maximumNameLength,
+                defaultFloors,defaultRoomsPerFloor,defaultApartmentType,defaultOccupancyPercent,defaultComplexName,
+                defaultDistribution);
+    }
+
+    public int parseUtilityLine(String[] line, String[] utilityNames, double[] utilityPrices, int index) throws InvalidConfigurationException {
+        try {
+            utilityNames[index] = line[1];
+            utilityPrices[index] = Double.parseDouble(line[2]);
+            return index + 1;
+        } catch (NumberFormatException e) {
+            throw new InvalidConfigurationException("Invalid setting: " + line[0], "referenceDataFile");
         }
     }
 }
