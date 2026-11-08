@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class SingleApartment extends Apartment {
     private Resident occupant;
 
@@ -31,6 +33,6 @@ public class SingleApartment extends Apartment {
 
     @Override
     public double calculateNoiseEmission() {
-        return occupant.getNoiseEmission();
+        return 0;
     }
 }
