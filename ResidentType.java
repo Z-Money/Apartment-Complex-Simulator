@@ -8,7 +8,13 @@ public class ResidentType {
     private double generationChance;
 
     public ResidentType(String typeName, double noiseTolerance, double amenityWeight, double costSensitivity, double utilityUsageRate, double moveOutSensitivity, double generationChance) {
-
+        this.typeName = typeName;
+        this.noiseTolerance = noiseTolerance;
+        this.amenityWeight = amenityWeight;
+        this.costSensitivity = costSensitivity;
+        this.utilityUsageRate = utilityUsageRate;
+        this.moveOutSensitivity = moveOutSensitivity;
+        this.generationChance = generationChance;
     }
 
     public String getTypeName() {
