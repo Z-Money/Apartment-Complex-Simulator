@@ -9,7 +9,9 @@ public class ApartmentComplex {
     private ArrayList<Amenity> amenities;
 
     public ApartmentComplex(String complexName, int numberOfFloors, int roomsPerFloor) {
-
+        this.complexName = complexName;
+        this.numberOfFloors = numberOfFloors;
+        this.roomsPerFloor = roomsPerFloor;
     }
 
     public void buildLayout(int apartmentType, Random random) {
