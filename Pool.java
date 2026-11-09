@@ -3,8 +3,8 @@ import java.util.Random;
 public class Pool extends Amenity {
     private String[] possibleStatuses;
 
-    public Pool(double chance, double qualityContribution, double cost) {
-        super("Pool", chance, qualityContribution, cost);
+    public Pool(String name, double chance, double qualityContribution, double cost) {
+        super(name, chance, qualityContribution, cost);
         possibleStatuses = new String[]{"Full-Operation", "Closed"};
     }
 

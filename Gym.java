@@ -3,8 +3,8 @@ import java.util.Random;
 public class Gym extends Amenity {
     private String[] possibleStatuses;
 
-    public Gym(double chance, double qualityContribution, double cost) {
-        super("Gym", chance, qualityContribution, cost);
+    public Gym(String name, double chance, double qualityContribution, double cost) {
+        super(name, chance, qualityContribution, cost);
         possibleStatuses = new String[]{"Full-Operation", "Reduced Machines", "Closed"};
     }
 

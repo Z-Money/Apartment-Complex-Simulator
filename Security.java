@@ -3,8 +3,8 @@ import java.util.Random;
 public class Security extends Amenity {
     private String[] possibleStatuses;
 
-    public Security(double chance, double qualityContribution, double cost) {
-        super("Security", chance, qualityContribution, cost);
+    public Security(String name, double chance, double qualityContribution, double cost) {
+        super(name, chance, qualityContribution, cost);
         possibleStatuses = new String[]{"Full-Operation", "Reduced Force", "Not Functioning"};
     }
 

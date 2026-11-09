@@ -3,8 +3,8 @@ import java.util.Random;
 public class LaundryMachines extends Amenity {
     private String[] possibleStatuses;
 
-    public LaundryMachines(double chance, double qualityContribution, double cost) {
-        super("Laundry Machines", chance, qualityContribution, cost);
+    public LaundryMachines(String name, double chance, double qualityContribution, double cost) {
+        super(name, chance, qualityContribution, cost);
         possibleStatuses = new String[]{"Full-Operation", "Half-Operation", "Closed"};
     }
 
