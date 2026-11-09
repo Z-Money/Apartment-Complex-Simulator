@@ -5,6 +5,7 @@ public class Gym extends Amenity {
 
     public Gym(double chance, double qualityContribution, double cost) {
         super("Gym", chance, qualityContribution, cost);
+        possibleStatuses = new String[]{"Full-Operation", "Reduced Machines", "Closed"};
     }
 
     @Override

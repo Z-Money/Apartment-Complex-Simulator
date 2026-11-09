@@ -5,6 +5,7 @@ public class Security extends Amenity {
 
     public Security(double chance, double qualityContribution, double cost) {
         super("Security", chance, qualityContribution, cost);
+        possibleStatuses = new String[]{"Full-Operation", "Reduced Force", "Not Functioning"};
     }
 
     @Override
