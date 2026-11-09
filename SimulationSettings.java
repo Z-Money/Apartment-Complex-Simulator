@@ -13,6 +13,14 @@ public class SimulationSettings {
 
     public SimulationSettings(ReferenceData referenceData) {
         this.referenceData = referenceData;
+        complexName = "";
+        numberOfFloors = 0;
+        roomsPerFloor = 0;
+        apartmentType = 0;
+        initialResidentCount = 0;
+        amenityNames = new String[4];
+        amenityStatuses = new String[4];
+        residentDistributions = new int[4];
     }
 
     public void loadDefaults() {
@@ -75,8 +83,14 @@ public class SimulationSettings {
         }
     }
 
-    public void setAmenityStatuses(String[] names, String[] statuses) {
-
+    public void setAmenityStatus(String name, String status) {
+        String[] validAmenityNames = referenceData.getAmenityNames();
+        for (int i = 0; i < validAmenityNames.length; i++) {
+            if (name.equals(validAmenityNames[i])) {
+                amenityNames[i] = name;
+                amenityStatuses[i] = status;
+            }
+        }
     }
 
     public void setResidentDistributions(int[] percentages) throws InvalidConfigurationException {
@@ -92,22 +106,26 @@ public class SimulationSettings {
 
     public ArrayList<String> applyImportedValues(String[] values) {
         ArrayList<String> invalidValues = new ArrayList<>();
-        for (int i = 0; i < values.length - 1; i++) {
+        for (int i = 0; i < values.length; i++) {
             try {
-                if (i == 0) setComplexName(values[0]);
-                if (i == 1) setNumberOfFloors(Integer.parseInt(values[1]));
-                if (i == 2) setRoomsPerFloor(Integer.parseInt(values[2]));
-                if (i == 3) setApartmentType(Integer.parseInt(values[3]));
-                if (i == 4) setInitialResidentCount(Integer.parseInt(values[4]), Integer.parseInt(values[5]));
-                if (i == 6) return null;
-
+                String[] line = values[i].trim().split(",");
+                switch (line[0]) {
+                    case "Complex Name" -> setComplexName(line[1]);
+                    case "Number of Floors" -> setNumberOfFloors(Integer.parseInt(line[1]));
+                    case "Rooms per Floor" -> setRoomsPerFloor(Integer.parseInt(line[1]));
+                    case "Apartment Type" -> setApartmentType(Integer.parseInt(line[1]));
+                    case "Initial Number of Residents" -> setInitialResidentCount(Integer.parseInt(line[1]), 100);
+                    case "Amenity" -> setAmenityStatus(line[1], line[2]);
+                    case "Resident Distribution" ->
+                            setResidentDistributions(new int[]{Integer.parseInt(line[1]), Integer.parseInt(line[2]), Integer.parseInt(line[3]), Integer.parseInt(line[4])});
+                    default -> throw new InvalidConfigurationException("Invalid setting on row " + i, "settingsFile");
+                }
             } catch (NumberFormatException e) {
                 continue;
             } catch (InvalidConfigurationException e) {
                 invalidValues.add(values[i]);
             }
         }
-
         return invalidValues;
     }
 
