@@ -132,7 +132,7 @@ public class ReferenceData {
         return values;
     }
 
-    public Amenity createAmenity(String name, String initialStatus) {
+    public Amenity createAmenity(String name, String initialStatus) throws InvalidConfigurationException {
         int index = getAmenityByIndex(name, amenityNames);
         if (index != -1) {
             Amenity amenity;
@@ -141,10 +141,13 @@ public class ReferenceData {
                 amenity.setCurrentStatus(initialStatus);
             } else if (name.equals("Pool")) {
                 amenity = new Pool(name, amenityChances[index], amenityQualityContributions[index], amenityCosts[index]);
+                amenity.setCurrentStatus(initialStatus);
             } else if (name.equals("Gym")) {
                 amenity = new Gym(name, amenityChances[index], amenityQualityContributions[index], amenityCosts[index]);
+                amenity.setCurrentStatus(initialStatus);
             } else if (name.equals("Security")) {
                 amenity = new Security(name, amenityChances[index], amenityQualityContributions[index], amenityCosts[index]);
+                amenity.setCurrentStatus(initialStatus);
             } else {
                 amenity = null;
             }
