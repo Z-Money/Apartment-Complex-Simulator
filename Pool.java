@@ -5,7 +5,7 @@ public class Pool extends Amenity {
 
     public Pool(String name, double chance, double qualityContribution, double cost) {
         super(name, chance, qualityContribution, cost);
-        possibleStatuses = new String[]{"FULL-OPERATION", "CLOSED"};
+        possibleStatuses = new String[]{"FULL_OPERATION", "CLOSED"};
     }
 
     @Override
