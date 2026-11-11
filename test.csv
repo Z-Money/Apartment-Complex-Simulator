@@ -15,7 +15,7 @@ ResidentType,No-Maintenance,0.2,0.15,0.65,0.8,0.60,0.16
 ResidentType,Low-Maintenance,0.4,0.30,0.50,0.9,0.75,0.34
 ResidentType,Standard-Maintenance,0.6,0.45,0.40,1.0,0.90,0.34
 ResidentType,High-Maintenance,0.9,0.60,0.25,1.2,1.1,0.16
-Amenity,Laundry Machines,0.04,0.35,0.0
-Amenity,Pool,0.12,0.12,0.0
-Amenity,Gym,0.05,0.18,0.0
+Amenity,Laundry Machines,0.04,0.35,100
+Amenity,Pool,0.12,0.12,375
+Amenity,Gym,0.05,0.18,100
 Amenity,Security,0.18,0.35,0.0
