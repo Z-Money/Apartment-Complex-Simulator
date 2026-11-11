@@ -12,10 +12,35 @@ public class ApartmentComplex {
         this.complexName = complexName;
         this.numberOfFloors = numberOfFloors;
         this.roomsPerFloor = roomsPerFloor;
+        apartments = new ArrayList<>();
+        amenities = new ArrayList<>();
     }
 
     public void buildLayout(int apartmentType, Random random) {
-
+        if (apartmentType == 1) {
+            for (int i = 0; i < numberOfFloors; i++) {
+                for (int j = 0; j < roomsPerFloor; j++) {
+                    Apartment apartment = new SingleApartment(i, j);
+                    apartments.add(apartment);
+                }
+            }
+        } else {
+            double percentSplit = (double) random.nextInt(30, 60) / 100;
+            int maxSingles = (int) (percentSplit * (numberOfFloors * roomsPerFloor));
+            int numOfSingles = 0;
+            for (int i = 0; i < numberOfFloors; i++) {
+                for (int j = 0; j < roomsPerFloor; j++) {
+                    Apartment apartment;
+                    if (random.nextBoolean() && numOfSingles < maxSingles) {
+                        apartment = new SingleApartment(i, j);
+                        numOfSingles++;
+                    } else {
+                        apartment = new DoubleApartment(i, j);
+                    }
+                    apartments.add(apartment);
+                }
+            }
+        }
     }
 
     public void addAmenity(Amenity amenity) {
@@ -59,11 +84,11 @@ public class ApartmentComplex {
     }
 
     public ArrayList<Apartment> getApartments() {
-        return null;
+        return apartments;
     }
 
     public ArrayList<Amenity> getAmenities() {
-        return null;
+        return amenities;
     }
 
     private ArrayList<Apartment> findNeighbors(Apartment apartment) {
