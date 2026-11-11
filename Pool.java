@@ -20,7 +20,13 @@ public class Pool extends Amenity {
 
     @Override
     public double calculateOperationalStatusFactor() {
-        return 0;
+        double operationalStatusFactor = 0.0;
+        if (getCurrentStatus().equals("FULL_OPERATION")) { // FULL_OPERATION
+            operationalStatusFactor = 1.0;
+        } else {
+            operationalStatusFactor = 0.0;
+        }
+        return operationalStatusFactor;
     }
 
     @Override
