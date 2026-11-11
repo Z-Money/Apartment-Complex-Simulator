@@ -130,4 +130,60 @@ public class ApartmentSimulator {
             }
         }
     }
+
+    private void runMonth() {
+        // TODO: Increase simState by 1 month, run monthly calculations and store in simResults
+    }
+
+    private void evaluateAmenities() {
+        // TODO: Make amenities evaluate monthly status change
+    }
+
+    private double calculateQualityScore() {
+        double qualityScore = 0.0;
+        for (Amenity amenity : complex.getAmenities()) {
+            qualityScore += amenity.calculateQualityScore();
+        }
+        return qualityScore;
+    }
+
+    private double calculateOperatingCost() {
+        return 0.0; // TODO: Fix once calcOperatingCost is made
+    }
+
+    private double calculateRentPerResident(double operatingCost) {
+        double rentPerResident = 0.0;
+        if (!complex.getAllResidents().isEmpty()) {
+            rentPerResident = calculateOperatingCost() / complex.getAllResidents().size();
+        }
+        return rentPerResident;
+    }
+
+    private double evaluateResidents(double apartmentQualityScore, double rent) {
+        // TODO: Calc satisfaction for all residents and get average once all done
+        return 0.0;
+    }
+
+    private int processMoveOuts(double averageSatisfaction) {
+        // TODO: Remove residents who don't meet move-out condition and return total of all left
+        return 0;
+    }
+
+    private void processMoveIns(double apartmentQualityScore, double rent) {
+        // TODO: Generate new resident per vacant space and place each
+    }
+
+    private void recordMonth(double averageSatisfaction, int movedOut, double utilityUsage) {
+        // TODO: Store month results in MonthlyRecord and update running totals
+    }
+
+    private int countVacantSpaces() {
+        int vacantSpaces = 0;
+        for (Apartment apartment : complex.getApartments()) {
+            if (!apartment.isOccupied()) {
+                vacantSpaces++;
+            }
+        }
+        return vacantSpaces;
+    }
 }
