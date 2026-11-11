@@ -17,6 +17,17 @@ public class ApartmentSimulator {
 //    private GUIController guiController;
     private Random random;
 
+    public ApartmentSimulator() {
+        database = new ApartmentComplexDatabase();
+        random = new Random();
+        try {
+            referenceData = database.readReferenceData("test.csv"); // Temp hardcode until GUI passes file path
+        } catch (InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+//        guiController = new GUIController();
+    }
+
     public static void main(String[] args) {
 //        System.setProperty("flatlaf.useNativeLibrary", "false");
 //        FlatLightLaf.setup();
@@ -42,21 +53,10 @@ public class ApartmentSimulator {
 //            SimulationSettings simSettings = new SimulationSettings(refData);
 //            ArrayList<String> invalidValues = simSettings.applyImportedValues(db.readSettingsFile("settings.csv"));
 //            System.out.println(simSettings.getAmenityNames()[3] + "," + simSettings.getAmenityStatuses()[3]);
-            ApartmentSimulator sim = new ApartmentSimulator();
-            String[] stuff = sim.importSetup("settings.csv");
-            sim.applySetup(stuff);
-            sim.beginSimulation();
-    }
-
-    public ApartmentSimulator() {
-        database = new ApartmentComplexDatabase();
-        random = new Random();
-        try {
-            referenceData = database.readReferenceData("test.csv"); // Temp hardcode until GUI passes file path
-        } catch (InvalidConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-//        guiController = new GUIController();
+        ApartmentSimulator sim = new ApartmentSimulator();
+        String[] stuff = sim.importSetup("settings.csv");
+        sim.applySetup(stuff);
+        sim.beginSimulation();
     }
 
     public void runSimulator() {
@@ -121,9 +121,13 @@ public class ApartmentSimulator {
         complex.buildLayout(apartmentType, random);
         String[] amenityNames = simSettings.getAmenityNames();
         String[] amenityStatuses = simSettings.getAmenityStatuses();
-        for (int i = 0; i <amenityNames.length; i++) {
-            Amenity amenity = referenceData.createAmenity(amenityNames[i], amenityStatuses[i]);
-            complex.addAmenity(amenity);
+        for (int i = 0; i < amenityNames.length; i++) {
+            try {
+                Amenity amenity = referenceData.createAmenity(amenityNames[i], amenityStatuses[i]);
+                complex.addAmenity(amenity);
+            } catch (InvalidConfigurationException e) {
+                throw new RuntimeException(e); // TODO: Prob should do smth about this once GUI exist
+            }
         }
     }
 }
