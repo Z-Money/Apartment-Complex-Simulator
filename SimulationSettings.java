@@ -50,7 +50,7 @@ public class SimulationSettings {
     public void setNumberOfFloors(int floors) throws InvalidConfigurationException {
         int[] limits = referenceData.getFloorLimits();
         int min = limits[0], max = limits[1];
-        if (min <= floors && floors >= max) {
+        if (min <= floors && floors <= max) {
             numberOfFloors = floors;
         } else {
             throw new InvalidConfigurationException("Invalid number of floors", "numberOfFloors");
@@ -60,7 +60,7 @@ public class SimulationSettings {
     public void setRoomsPerFloor(int rooms) throws InvalidConfigurationException {
         int[] limits = referenceData.getRoomLimits();
         int min = limits[0], max = limits[1];
-        if (min <= rooms && rooms >= max) {
+        if (min <= rooms && rooms <= max) {
             roomsPerFloor = rooms;
         } else {
             throw new InvalidConfigurationException("Invalid number of rooms per floor", "roomsPerFloor");
