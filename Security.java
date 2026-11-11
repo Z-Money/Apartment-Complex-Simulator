@@ -2,10 +2,12 @@ import java.util.Random;
 
 public class Security extends Amenity {
     private String[] possibleStatuses;
+    private double costPerApartment;
 
     public Security(String name, double chance, double qualityContribution, double cost) {
         super(name, chance, qualityContribution, cost);
         possibleStatuses = new String[]{"FULL_OPERATION", "REDUCED_FORCE", "NOT_FUNCTIONING"};
+        costPerApartment = 15;
     }
 
     @Override
@@ -15,7 +17,7 @@ public class Security extends Amenity {
 
     @Override
     public String selectDegradedStatus(Random random) {
-        return "";
+        return possibleStatuses[1 + random.nextInt(0, possibleStatuses.length) - 1];
     }
 
     @Override
@@ -32,7 +34,7 @@ public class Security extends Amenity {
     }
 
     @Override
-    public double calculateMonthlyCost(int residentCount, int apartmentCount) {
-        return 0;
+    public double calculateUsageCost(int residentCount, int apartmentCount) {
+        return costPerApartment * apartmentCount;
     }
 }

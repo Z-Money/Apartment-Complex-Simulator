@@ -15,7 +15,7 @@ public class Pool extends Amenity {
 
     @Override
     public String selectDegradedStatus(Random random) {
-        return "";
+        return possibleStatuses[1];
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Pool extends Amenity {
     }
 
     @Override
-    public double calculateMonthlyCost(int residentCount, int apartmentCount) {
-        return 0;
+    public double calculateUsageCost(int residentCount, int apartmentCount) {
+        return getBaseCost();
     }
 }

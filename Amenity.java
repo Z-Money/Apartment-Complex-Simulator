@@ -4,25 +4,30 @@ public abstract class Amenity {
     private String name;
     private double chanceAtClosing;
     private double qualityContribution;
-    private double monthlyCost;
+    private double baseCost;
     private String currentStatus;
 
-    public Amenity(String name, double chanceAtClosing, double qualityContribution, double monthlyCost) {
+    public Amenity(String name, double chanceAtClosing, double qualityContribution, double baseCost) {
         this.name = name;
         this.chanceAtClosing = chanceAtClosing;
         this.qualityContribution = qualityContribution;
-        this.monthlyCost = monthlyCost;
+        this.baseCost = baseCost;
     }
 
     public void evaluateMonthlyStatus(Random random) {
-
+        double randomChance = random.nextDouble();
+        if (chanceAtClosing > randomChance) {
+            currentStatus = selectDegradedStatus(random); // Doesn't use setCurrentStatus since status comes from list of possible statuses
+        } else {
+            currentStatus = "FULL_OPERATION"; // Doesn't use setCurrentStatus since possibleStatuses are constant and all have FULL_OPERATION
+        }
     }
 
     public void setCurrentStatus(String status) throws InvalidConfigurationException {
         if (isStatusAllowed(status)) {
             currentStatus = status;
         } else {
-            throw new InvalidConfigurationException("Invalid amenity status", "amenityStatus");
+            throw new InvalidConfigurationException("Invalid status " + status + " for " + name, "amenityStatus");
         }
     }
 
@@ -42,20 +47,25 @@ public abstract class Amenity {
         return qualityContribution * calculateOperationalStatusFactor();
     }
 
-    public double calculateMonthlyCost() {
-        return 0;
+    public double calculateMonthlyCost(int residentCount, int apartmentCount) {
+        System.out.printf("Usage Cost: %.2f, Operational Status Factor: %.2f%n", calculateUsageCost(residentCount, apartmentCount), calculateOperationalStatusFactor());
+        return calculateUsageCost(residentCount, apartmentCount) * calculateOperationalStatusFactor();
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public String getCurrentStatus() {
-        return this.currentStatus;
+        return currentStatus;
     }
 
     public double getChanceAtClosing() {
-        return this.chanceAtClosing;
+        return chanceAtClosing;
+    }
+
+    public double getBaseCost() {
+        return baseCost;
     }
 
     public abstract String[] getPossibleStatuses();
@@ -64,5 +74,5 @@ public abstract class Amenity {
 
     public abstract double calculateOperationalStatusFactor();
 
-    public abstract double calculateMonthlyCost(int residentCount, int apartmentCount);
+    public abstract double calculateUsageCost(int residentCount, int apartmentCount);
 }
