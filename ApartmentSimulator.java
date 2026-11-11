@@ -37,21 +37,25 @@ public class ApartmentSimulator {
 //            frame.setLocationRelativeTo(null);
 //            frame.setVisible(true);
 //        });
-        ApartmentComplexDatabase db = new ApartmentComplexDatabase();
-        try {
-            ReferenceData refData = db.readReferenceData("test.csv");
-            SimulationSettings simSettings = new SimulationSettings(refData);
-            ArrayList<String> invalidValues = simSettings.applyImportedValues(db.readSettingsFile("settings.csv"));
-            System.out.println(simSettings.getAmenityNames()[3] + "," + simSettings.getAmenityStatuses()[3]);
-        } catch (InvalidConfigurationException e) {
-            throw new RuntimeException(e);
-        }
+
+//            ReferenceData refData = db.readReferenceData("test.csv");
+//            SimulationSettings simSettings = new SimulationSettings(refData);
+//            ArrayList<String> invalidValues = simSettings.applyImportedValues(db.readSettingsFile("settings.csv"));
+//            System.out.println(simSettings.getAmenityNames()[3] + "," + simSettings.getAmenityStatuses()[3]);
+            ApartmentSimulator sim = new ApartmentSimulator();
+            String[] stuff = sim.importSetup("settings.csv");
+            sim.applySetup(stuff);
+            sim.beginSimulation();
     }
 
     public ApartmentSimulator() {
         database = new ApartmentComplexDatabase();
         random = new Random();
-        referenceData = database.readReferenceData("test.csv");
+        try {
+            referenceData = database.readReferenceData("test.csv"); // Temp hardcode until GUI passes file path
+        } catch (InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
 //        guiController = new GUIController();
     }
 
@@ -62,6 +66,7 @@ public class ApartmentSimulator {
     public void useDefaultSetup() {
         try {
             referenceData = database.readReferenceData("test.csv");
+            simSettings = new SimulationSettings(referenceData);
             simSettings.loadDefaults();
         } catch (InvalidConfigurationException e) {
             // TODO: Do stuff with GUI
@@ -88,6 +93,7 @@ public class ApartmentSimulator {
     }
 
     public void applySetup(String[] setupLines) {
+        simSettings = new SimulationSettings(referenceData);
         simSettings.applyImportedValues(setupLines);
     }
 
@@ -107,6 +113,17 @@ public class ApartmentSimulator {
     }
 
     public void buildComplex() {
-        // TODO: Build complex
+        String complexName = simSettings.getComplexName();
+        int floors = simSettings.getNumberOfFloors();
+        int rooms = simSettings.getRoomsPerFloor();
+        complex = new ApartmentComplex(complexName, floors, rooms);
+        int apartmentType = simSettings.getApartmentType();
+        complex.buildLayout(apartmentType, random);
+        String[] amenityNames = simSettings.getAmenityNames();
+        String[] amenityStatuses = simSettings.getAmenityStatuses();
+        for (int i = 0; i <amenityNames.length; i++) {
+            Amenity amenity = referenceData.createAmenity(amenityNames[i], amenityStatuses[i]);
+            complex.addAmenity(amenity);
+        }
     }
 }
