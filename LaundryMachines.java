@@ -5,7 +5,7 @@ public class LaundryMachines extends Amenity {
 
     public LaundryMachines(String name, double chance, double qualityContribution, double cost) {
         super(name, chance, qualityContribution, cost);
-        possibleStatuses = new String[]{"Full-Operation", "Half-Operation", "Closed"};
+        possibleStatuses = new String[]{"FULL-OPERATION", "HALF-OPERATION", "CLOSED"};
     }
 
     @Override
