@@ -38,6 +38,10 @@ public abstract class Amenity {
         return isAllowed;
     }
 
+    public double calculateQualityScore() {
+        return qualityContribution * calculateOperationalStatusFactor();
+    }
+
     public double calculateMonthlyCost() {
         return 0;
     }
@@ -53,8 +57,6 @@ public abstract class Amenity {
     public double getChanceAtClosing() {
         return this.chanceAtClosing;
     }
-
-    public abstract double calculateQualityScore();
 
     public abstract String[] getPossibleStatuses();
 
