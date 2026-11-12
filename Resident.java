@@ -5,19 +5,27 @@ public class Resident {
     private double noiseLevel;
 
     public Resident(int residentId, ResidentType residentType) {
-
+        this.residentId = residentId;
+        this.residentType = residentType;
+        currentSatisfaction = 0.0;
+        noiseLevel = 0.0;
     }
 
     public double calculateSatisfaction(double averageQualityScore, double rent) {
-        return 0;
+        double amenityScore = residentType.getAmenityWeight() * averageQualityScore;
+        double noiseScore = residentType.getNoiseSensitivity() * noiseLevel;
+        double costScore = residentType.getCostSensitivity() * rent;
+        double satisfactionScore = amenityScore - noiseScore - costScore;
+        currentSatisfaction = satisfactionScore;
+        return satisfactionScore;
     }
 
     public boolean shouldMoveOut(double averageSatisfaction) {
-        return false;
+        return currentSatisfaction < (averageSatisfaction * residentType.getMoveOutSensitivity());
     }
 
     public double calculateUtilityUsage(double baselineUsage) {
-        return 0;
+        return baselineUsage * residentType.getUtilityUsageRate();
     }
 
     public void setNoiseLevel(double noiseLevel) {
