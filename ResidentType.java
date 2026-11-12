@@ -18,30 +18,30 @@ public class ResidentType {
     }
 
     public String getTypeName() {
-        return this.typeName;
+        return typeName;
     }
 
     public double getNoiseSensitivity() {
-        return this.noiseSensitivity;
+        return noiseSensitivity;
     }
 
     public double getAmenityWeight() {
-        return this.amenityWeight;
+        return amenityWeight;
     }
 
     public double getCostSensitivity() {
-        return this.costSensitivity;
+        return costSensitivity;
     }
 
     public double getUtilityUsageRate() {
-        return this.utilityUsageRate;
+        return utilityUsageRate;
     }
 
     public double getMoveOutSensitivity() {
-        return this.moveOutSensitivity;
+        return moveOutSensitivity;
     }
 
     public double getGenerationChance() {
-        return this.generationChance;
+        return generationChance;
     }
 }
