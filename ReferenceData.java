@@ -187,54 +187,54 @@ public class ReferenceData {
     }
 
     public double getBaseCost() {
-        return this.baseCost;
+        return baseCost;
     }
 
     public double getBaselineUsage() {
-        return this.baselineUsage;
+        return baselineUsage;
     }
 
     public ArrayList<ResidentType> getResidentTypes() {
-        return this.residentTypes;
+        return residentTypes;
     }
 
     public String[] getAmenityNames() {
-        return this.amenityNames;
+        return amenityNames;
     }
 
     public int[] getFloorLimits() {
-        return this.floorLimits;
+        return floorLimits;
     }
 
     public int[] getRoomLimits() {
-        return this.roomLimits;
+        return roomLimits;
     }
 
     public int getMaximumNameLength() {
-        return this.maximumNameLength;
+        return maximumNameLength;
     }
 
     public int getDefaultFloors() {
-        return this.defaultFloors;
+        return defaultFloors;
     }
 
     public int getDefaultRoomsPerFloor() {
-        return this.defaultRoomsPerFloor;
+        return defaultRoomsPerFloor;
     }
 
     public int getDefaultApartmentType() {
-        return this.defaultApartmentType;
+        return defaultApartmentType;
     }
 
     public int getDefaultOccupancyPercent() {
-        return this.defaultOccupancyPercent;
+        return defaultOccupancyPercent;
     }
 
     public String getDefaultComplexName() {
-        return this.defaultComplexName;
+        return defaultComplexName;
     }
 
     public int[] getDefaultDistribution() {
-        return this.defaultDistribution;
+        return defaultDistribution;
     }
 }
