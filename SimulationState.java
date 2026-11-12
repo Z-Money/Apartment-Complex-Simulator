@@ -17,56 +17,51 @@ public class SimulationState {
     }
 
     public void recordFirstMonthRent(double rent) {
-        this.firstMonthRent = rent;
+        firstMonthRent = rent;
     }
 
     public void addMovedOut(int count) {
-        this.totalMovedOut += count;
+        totalMovedOut += count;
     }
 
     public void addUtilityUsage(double amount) {
-        this.cumulativeUtilityUsage += amount;
+        cumulativeUtilityUsage += amount;
     }
 
     public void addMonthlyRecord(MonthlyRecord record) {
-        this.monthlyRecords.add(record);
+        monthlyRecords.add(record);
     }
 
     public void advanceMonth() {
-        this.currentMonth += 1;
-        this.totalMonths += 1;
+        currentMonth += 1;
+        totalMonths += 1;
     }
 
     public boolean isSimulationComplete() {
-        if (totalMonths == 12) {
-            return true;
-        } else {
-            return false;
-        }
+        return totalMonths == 12;
     }
 
     public int getCurrentMonth() {
-        return this.currentMonth;
+        return currentMonth;
     }
 
     public int getTotalMonths() {
-        return this.totalMonths;
+        return totalMonths;
     }
 
     public double getFirstMonthRent() {
-        return this.firstMonthRent;
+        return firstMonthRent;
     }
 
     public int getTotalMovedOut() {
-        return this.totalMovedOut;
+        return totalMovedOut;
     }
 
     public double getCumulativeUtilityUsage() {
-        return this.cumulativeUtilityUsage;
+        return cumulativeUtilityUsage;
     }
 
     public ArrayList<MonthlyRecord> getMonthlyRecords() {
-        return this.monthlyRecords;
+        return monthlyRecords;
     }
-
 }
