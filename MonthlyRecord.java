@@ -18,30 +18,30 @@ public class MonthlyRecord {
     }
 
     public int getMonthNumber() {
-        return this.monthNumber;
+        return monthNumber;
     }
 
     public double getAverageSatisfaction() {
-        return this.averageSatisfaction;
+        return averageSatisfaction;
     }
 
     public int getTotalResidents() {
-        return this.totalResidents;
+        return totalResidents;
     }
 
     public int getOccupiedSingles() {
-        return this.occupiedSingles;
+        return occupiedSingles;
     }
 
     public int getOccupiedDoubles() {
-        return this.occupiedDoubles;
+        return occupiedDoubles;
     }
 
     public int getResidentsMovedOut() {
-        return this.residentsMovedOut;
+        return residentsMovedOut;
     }
 
     public double getUtilityUsage() {
-        return this.utilityUsage;
+        return utilityUsage;
     }
 }
