@@ -1,15 +1,15 @@
 public class ResidentType {
     private String typeName;
-    private double noiseTolerance;
+    private double noiseSensitivity;
     private double amenityWeight;
     private double costSensitivity;
     private double utilityUsageRate;
     private double moveOutSensitivity;
     private double generationChance;
 
-    public ResidentType(String typeName, double noiseTolerance, double amenityWeight, double costSensitivity, double utilityUsageRate, double moveOutSensitivity, double generationChance) {
+    public ResidentType(String typeName, double noiseSensitivity, double amenityWeight, double costSensitivity, double utilityUsageRate, double moveOutSensitivity, double generationChance) {
         this.typeName = typeName;
-        this.noiseTolerance = noiseTolerance;
+        this.noiseSensitivity = noiseSensitivity;
         this.amenityWeight = amenityWeight;
         this.costSensitivity = costSensitivity;
         this.utilityUsageRate = utilityUsageRate;
@@ -21,8 +21,8 @@ public class ResidentType {
         return this.typeName;
     }
 
-    public double getNoiseTolerance() {
-        return this.noiseTolerance;
+    public double getNoiseSensitivity() {
+        return this.noiseSensitivity;
     }
 
     public double getAmenityWeight() {

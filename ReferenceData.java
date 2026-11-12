@@ -91,13 +91,13 @@ public class ReferenceData {
     public ResidentType parseResidentLine(String[] line) throws InvalidConfigurationException {
         try {
             String typeName = line[1];
-            double noiseTolerance = Double.parseDouble(line[2]);
+            double noiseSensitivity = Double.parseDouble(line[2]);
             double amenityWeight = Double.parseDouble(line[3]);
             double costSensitivity = Double.parseDouble(line[4]);
             double utilityUsageRate = Double.parseDouble(line[5]);
             double moveOutSensitivity = Double.parseDouble(line[6]);
             double generationChance = Double.parseDouble(line[7]);
-            return new ResidentType(typeName, noiseTolerance, amenityWeight, costSensitivity, utilityUsageRate, moveOutSensitivity, generationChance);
+            return new ResidentType(typeName, noiseSensitivity, amenityWeight, costSensitivity, utilityUsageRate, moveOutSensitivity, generationChance);
         } catch (NumberFormatException e) {
             throw new InvalidConfigurationException("Invalid resident type value: " + e.getLocalizedMessage(), "residentType");
         }
