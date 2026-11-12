@@ -55,7 +55,11 @@ public class ApartmentSimulator {
 //            System.out.println(simSettings.getAmenityNames()[3] + "," + simSettings.getAmenityStatuses()[3]);
         ApartmentSimulator sim = new ApartmentSimulator();
         String[] stuff = sim.importSetup("settings.csv");
-        sim.applySetup(stuff);
+        try {
+            sim.applySetup(stuff);
+        } catch (InvalidConfigurationException e) {
+            throw new RuntimeException(e); // TODO: Connect to GUI
+        }
         sim.beginSimulation();
     }
 
@@ -92,9 +96,12 @@ public class ApartmentSimulator {
         return capacity;
     }
 
-    public void applySetup(String[] setupLines) {
+    public void applySetup(String[] setupLines) throws InvalidConfigurationException {
         simSettings = new SimulationSettings(referenceData);
-        simSettings.applyImportedValues(setupLines);
+        ArrayList<String> invalidSettings = simSettings.applyImportedValues(setupLines);
+        if (invalidSettings.isEmpty()) {
+            throw new InvalidConfigurationException("Invalid settings: " + invalidSettings.toString(), "settingsFile");
+        }
     }
 
     public void beginSimulation() {

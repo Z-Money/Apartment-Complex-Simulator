@@ -32,11 +32,7 @@ public class SimulationSettings {
     }
 
     public int calculateDefaultResidentCount(int capacity) {
-        return 0;
-    }
-
-    public int parseWholeNumber(String text, String settingName) {
-        return 0;
+        return (int) (capacity * (double) (referenceData.getDefaultOccupancyPercent() / 100));
     }
 
     public void setComplexName(String name) throws InvalidConfigurationException {
@@ -127,14 +123,6 @@ public class SimulationSettings {
             }
         }
         return invalidValues;
-    }
-
-    public String[] toKeyValueArray() {
-        return null;
-    }
-
-    public boolean isComplete() {
-        return false;
     }
 
     public String getComplexName() {
