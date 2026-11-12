@@ -48,7 +48,6 @@ public abstract class Amenity {
     }
 
     public double calculateMonthlyCost(int residentCount, int apartmentCount) {
-        System.out.printf("Usage Cost: %.2f, Operational Status Factor: %.2f%n", calculateUsageCost(residentCount, apartmentCount), calculateOperationalStatusFactor());
         return calculateUsageCost(residentCount, apartmentCount) * calculateOperationalStatusFactor();
     }
 
