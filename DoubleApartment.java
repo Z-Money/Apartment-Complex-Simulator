@@ -10,26 +10,30 @@ public class DoubleApartment extends Apartment {
 
     @Override
     public int getCapacity() {
-        return 0;
+        return 2;
     }
 
     @Override
     public ArrayList<Resident> getResidents() {
-        return null;
+        return occupants;
     }
 
     @Override
     public void addResident(Resident resident) {
-
+        occupants.add(resident);
     }
 
     @Override
     public void removeResident(Resident resident) {
-
+        occupants.remove(resident);
     }
 
     @Override
     public double calculateNoiseEmission() {
-        return 0;
+        double noiseEmission = 0.0;
+        for (Resident resident : occupants) {
+            noiseEmission += resident.calculateNoiseEmission();
+        }
+        return noiseEmission;
     }
 }

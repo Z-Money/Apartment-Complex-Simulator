@@ -25,14 +25,18 @@ public class Resident {
     }
 
     public int getResidentId() {
-        return this.residentId;
+        return residentId;
     }
 
     public ResidentType getResidentType() {
-        return this.residentType;
+        return residentType;
     }
 
     public double getCurrentSatisfaction() {
-        return this.currentSatisfaction;
+        return currentSatisfaction;
+    }
+
+    public double calculateNoiseEmission() {
+        return residentType.calculateNoiseEmission();
     }
 }

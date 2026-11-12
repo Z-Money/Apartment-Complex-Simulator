@@ -9,16 +9,16 @@ public class SingleApartment extends Apartment {
 
     @Override
     public int getCapacity() {
-        if (occupant == null) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return 1;
     }
 
     @Override
     public ArrayList<Resident> getResidents() {
-        return null;
+        ArrayList<Resident> residents = new ArrayList<>();
+        if (occupant != null) {
+            residents.add(occupant);
+        }
+        return residents;
     }
 
     @Override
@@ -33,6 +33,12 @@ public class SingleApartment extends Apartment {
 
     @Override
     public double calculateNoiseEmission() {
-        return 0;
+        double noiseEmission = 0.0;
+        if (occupant == null) {
+            noiseEmission = 0;
+        } else {
+            noiseEmission = occupant.calculateNoiseEmission();
+        }
+        return noiseEmission;
     }
 }

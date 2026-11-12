@@ -44,4 +44,8 @@ public class ResidentType {
     public double getGenerationChance() {
         return generationChance;
     }
+
+    public double calculateNoiseEmission() {
+        return 1.0 - noiseSensitivity;
+    }
 }
