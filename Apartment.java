@@ -5,25 +5,28 @@ public abstract class Apartment {
     private int roomNumber;
 
     public Apartment(int floorNumber, int roomNumber) {
-
+        this.floorNumber = floorNumber;
+        this.roomNumber = roomNumber;
     }
 
     public int getFloorNumber() {
-        return this.floorNumber;
+        return floorNumber;
     }
 
     public int getRoomNumber() {
-        return this.roomNumber;
+        return roomNumber;
     }
 
     public boolean isOccupied() {
-        // TODO: Figure out how to determine isOccupied
-        return false;
+        return getResidentCount() > 0;
     }
 
     public int getResidentCount() {
-        // TODO: Figure out how to determine this
-        return 0;
+        return getResidents().size();
+    }
+
+    public int getVacantSpace() {
+        return getCapacity() - getResidentCount();
     }
 
     public abstract int getCapacity();
