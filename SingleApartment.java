@@ -5,6 +5,7 @@ public class SingleApartment extends Apartment {
 
     public SingleApartment(int floorNumber, int roomNumber) {
         super(floorNumber, roomNumber);
+        occupant = null;
     }
 
     @Override

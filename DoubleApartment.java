@@ -6,6 +6,7 @@ public class DoubleApartment extends Apartment {
 
     public DoubleApartment(int floorNumber, int roomNumber) {
         super(floorNumber, roomNumber);
+        occupants = new ArrayList<>();
     }
 
     @Override
