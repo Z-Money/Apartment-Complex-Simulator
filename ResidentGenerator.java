@@ -14,7 +14,7 @@ public class ResidentGenerator {
         int[] distributionCounts = new int[distribution.length];
         int total = 0;
         for (int i = 0; i < distribution.length; i++) {
-            distributionCounts[i] = distribution[i] * count;
+            distributionCounts[i] = (int) (distribution[i] / 100.0 * count);
             total += distributionCounts[i];
         }
         if (total < count) {
