@@ -59,9 +59,8 @@ public class ApartmentSimulator {
             sim.applySetup(stuff);
             sim.beginSimulation();
             sim.runSimulation();
-            // TODO: Update with method to generate stylized file names with underscores
-            String resultsFileName = String.format("results_%s.csv", sim.complex.getComplexName());
-            String settingsFileName = String.format("settings_%s.csv", sim.complex.getComplexName());
+            String resultsFileName = sim.formatFileName("results");
+            String settingsFileName = sim.formatFileName("settings");
             sim.finishSimulation(resultsFileName, settingsFileName);
         } catch (InvalidConfigurationException | CapacityExceededException e) {
             throw new RuntimeException(e); // TODO: Connect to GUI
@@ -240,5 +239,14 @@ public class ApartmentSimulator {
         int vacantSpaces = 0;
         for (Apartment apartment : complex.getApartments()) vacantSpaces += apartment.getVacantSpace();
         return vacantSpaces;
+    }
+
+    private String formatFileName(String fileName) {
+        String complexName = complex.getComplexName().toLowerCase();
+        String newFileName = fileName;
+        for (String s : complexName.split(" ")) {
+            newFileName += ("_" + s);
+        }
+        return newFileName + ".csv";
     }
 }

@@ -1,0 +1,10 @@
+Complex Name,Pine Ridge
+Number of Floors,5
+Rooms per Floor,8
+Apartment Type,2
+Initial Number of Residents,40
+Amenity,Laundry Machines,FULL_OPERATION
+Amenity,Pool,CLOSED
+Amenity,Gym,FULL_OPERATION
+Amenity,Security,REDUCED_FORCE
+Resident Distribution,16,34,34,16
