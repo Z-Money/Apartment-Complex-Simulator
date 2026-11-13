@@ -26,6 +26,7 @@ public class SimulationResults {
             if (a.getCapacity() == 1 && a.isOccupied()) occupiedSingles++;
             else if (a.getCapacity() == 2 && a.isOccupied()) occupiedDoubles++;
         }
+        monthlyRecords = simState.getMonthlyRecords();
         totalResidents = complex.getAllResidents().size();
         totalMovedOut = simState.getTotalMovedOut();
         averageSatisfaction = calculateAverageSatisfaction();
@@ -79,10 +80,10 @@ public class SimulationResults {
         csvLines.add(String.format("Residents Moved Out,%d%n", totalMovedOut));
         csvLines.add(String.format("Average Resident Satisfaction (12-month),%.2f%n", averageSatisfaction));
         csvLines.add(String.format("Total Utility Usage,%.2f%n", totalUtilityUsage));
-        String highestSatisfied = "Highest Satisfied Type%n";
+        String highestSatisfied = "Highest Satisfied Type";
         for (String s : highestSatisfiedTypes) highestSatisfied = highestSatisfied + "," + s;
         csvLines.add(String.format("%s%n", highestSatisfied));
-        String lowestSatisfied = "Lowest Satisfied Type%n";
+        String lowestSatisfied = "Lowest Satisfied Type";
         for (String s : lowestSatisfiedTypes) lowestSatisfied = lowestSatisfied + "," + s;
         csvLines.add(String.format("%s%n", lowestSatisfied));
         csvLines.add("Month,AverageSatisfaction,Total Residents,Occupied Singles,Occupied Doubles,Residents Moved Out, Total Utilities Used%n");
