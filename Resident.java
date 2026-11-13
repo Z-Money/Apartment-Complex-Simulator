@@ -11,10 +11,12 @@ public class Resident {
         noiseLevel = 0.0;
     }
 
-    public double calculateSatisfaction(double averageQualityScore, double rent) {
+    public double calculateSatisfaction(double averageQualityScore, double rent, double firstMonthRent) {
         double amenityScore = residentType.getAmenityWeight() * averageQualityScore;
         double noiseScore = residentType.getNoiseSensitivity() * noiseLevel;
-        double costScore = residentType.getCostSensitivity() * rent;
+        double relativeRentChange = firstMonthRent == 0 ? 0.0 : (rent / firstMonthRent) - 1.0;
+        relativeRentChange = Math.max(-1.0, Math.min(1.0, relativeRentChange));
+        double costScore = residentType.getCostSensitivity() * relativeRentChange;
         double satisfactionScore = amenityScore - noiseScore - costScore;
         currentSatisfaction = satisfactionScore;
         return satisfactionScore;
