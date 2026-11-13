@@ -31,9 +31,7 @@ public class SimulationResults {
         averageSatisfaction = calculateAverageSatisfaction();
         totalUtilityUsage = simState.getCumulativeUtilityUsage();
         ArrayList<Resident> residents = complex.getAllResidents();
-        // TODO: Remove following comments
-        highestSatisfiedTypes = getHighestSatisfaction(residents); // W slop
-        lowestSatisfiedTypes = getLowestSatisfaction(residents); // More W slop
+        determineExtremeTypes(residents, residentTypes);
     }
 
     public ArrayList<String> getHighestSatisfaction(ArrayList<Resident> residents) {
@@ -74,8 +72,28 @@ public class SimulationResults {
     }
 
     public ArrayList<String> toCsvLines() {
-        // TODO: Yeah I genuinely don't know
-        return null;
+        ArrayList<String> csvLines = new ArrayList<>();
+        csvLines.add(String.format("Occupied Single Apartments,%d%n", occupiedSingles));
+        csvLines.add(String.format("Occupied Double Apartments,%d%n", occupiedDoubles));
+        csvLines.add(String.format("Total Residents,%d%n", totalResidents));
+        csvLines.add(String.format("Residents Moved Out,%d%n", totalMovedOut));
+        csvLines.add(String.format("Average Resident Satisfaction (12-month),%.2f%n", averageSatisfaction));
+        csvLines.add(String.format("Total Utility Usage,%.2f%n", totalUtilityUsage));
+        String highestSatisfied = "Highest Satisfied Type%n";
+        for (String s : highestSatisfiedTypes) highestSatisfied = highestSatisfied + "," + s;
+        csvLines.add(String.format("%s%n", highestSatisfied));
+        String lowestSatisfied = "Lowest Satisfied Type%n";
+        for (String s : lowestSatisfiedTypes) lowestSatisfied = lowestSatisfied + "," + s;
+        csvLines.add(String.format("%s%n", lowestSatisfied));
+        csvLines.add("Month,AverageSatisfaction,Total Residents,Occupied Singles,Occupied Doubles,Residents Moved Out, Total Utilities Used%n");
+        for (MonthlyRecord mr : monthlyRecords) csvLines.add(generateMonthlyRecordLine(mr));
+        return csvLines;
+    }
+
+    private String generateMonthlyRecordLine(MonthlyRecord monthlyRecord) {
+        return String.format("%d,%.2f,%d,%d,%d,%d,%.2f%n", monthlyRecord.getMonthNumber(), monthlyRecord.getAverageSatisfaction(),
+                monthlyRecord.getTotalResidents(), monthlyRecord.getOccupiedSingles(), monthlyRecord.getOccupiedDoubles(),
+                monthlyRecord.getResidentsMovedOut(), monthlyRecord.getUtilityUsage());
     }
 
     public String getComplexName() {

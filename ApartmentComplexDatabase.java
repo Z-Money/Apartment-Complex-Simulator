@@ -50,21 +50,17 @@ public class ApartmentComplexDatabase {
     }
 
     public boolean writeSettingsFile(String fileName, SimulationSettings settings) {
-        File newSettingsFile = new File(fileName);
-        boolean wroteFileSuccessfully = false;
+        boolean wroteFileSuccessfully;
         try {
+            File newSettingsFile = new File(fileName);
             PrintWriter printer = new PrintWriter(newSettingsFile);
-            printer.printf("Complex Name,%s%n", settings.getComplexName());
-            printer.printf("Number of Floors,%d%n", settings.getNumberOfFloors());
-            printer.printf("Rooms per Floor,%d%n", settings.getRoomsPerFloor());
-            printer.printf("Apartment Type,%d%n", settings.getApartmentType());
-            printer.printf("Initial Number of Residents,%d%n", settings.getInitialResidentCount());
+            printer.printf(getComplexInfo(settings));
             printer.printf(generateAmenityLines(settings));
             printer.printf(generateResidentDistributionLine(settings));
             printer.close();
             wroteFileSuccessfully = true;
-        } catch (FileNotFoundException e) {
-            wroteFileSuccessfully = true; // TODO: Dialog box with GUI indicating error saving settings
+        } catch (NullPointerException | FileNotFoundException e) {
+            wroteFileSuccessfully = false; // TODO: Dialog box with GUI indicating error saving settings
         }
         return wroteFileSuccessfully;
     }
@@ -87,5 +83,30 @@ public class ApartmentComplexDatabase {
             residentDistributionLine.append(String.format(",%d", residentDistribution));
         }
         return residentDistributionLine.toString();
+    }
+
+    private String getComplexInfo(SimulationSettings settings) {
+        return String.format("Complex Name,%s%n", settings.getComplexName()) +
+                String.format("Number of Floors,%d%n", settings.getNumberOfFloors()) +
+                String.format("Rooms per Floor,%d%n", settings.getRoomsPerFloor()) +
+                String.format("Apartment Type,%d%n", settings.getApartmentType()) +
+                String.format("Initial Number of Residents,%d%n", settings.getInitialResidentCount());
+    }
+
+    public boolean writeResultsFile(String fileName, SimulationSettings settings, SimulationResults results) {
+        boolean wroteFileSuccessfully;
+        try {
+            File resultsFile = new File(fileName);
+            PrintWriter printer = new PrintWriter(resultsFile);
+            printer.printf(getComplexInfo(settings));
+            for (String s : results.toCsvLines()) {
+                printer.printf(s);
+            }
+            printer.close();
+            wroteFileSuccessfully = true;
+        } catch (NullPointerException | FileNotFoundException e) {
+            wroteFileSuccessfully = false;
+        }
+        return wroteFileSuccessfully;
     }
 }
