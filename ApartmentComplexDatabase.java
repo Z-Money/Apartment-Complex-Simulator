@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -46,5 +47,45 @@ public class ApartmentComplexDatabase {
         } catch (FileNotFoundException e) {
             throw new InvalidConfigurationException("Error opening file: " + fileName, "settingsFile");
         }
+    }
+
+    public boolean writeSettingsFile(String fileName, SimulationSettings settings) {
+        File newSettingsFile = new File(fileName);
+        boolean wroteFileSuccessfully = false;
+        try {
+            PrintWriter printer = new PrintWriter(newSettingsFile);
+            printer.printf("Complex Name,%s%n", settings.getComplexName());
+            printer.printf("Number of Floors,%d%n", settings.getNumberOfFloors());
+            printer.printf("Rooms per Floor,%d%n", settings.getRoomsPerFloor());
+            printer.printf("Apartment Type,%d%n", settings.getApartmentType());
+            printer.printf("Initial Number of Residents,%d%n", settings.getInitialResidentCount());
+            printer.printf(generateAmenityLines(settings));
+            printer.printf(generateResidentDistributionLine(settings));
+            printer.close();
+            wroteFileSuccessfully = true;
+        } catch (FileNotFoundException e) {
+            wroteFileSuccessfully = true; // TODO: Dialog box with GUI indicating error saving settings
+        }
+        return wroteFileSuccessfully;
+    }
+
+    public String generateAmenityLines(SimulationSettings settings) {
+        StringBuilder amenityLine = new StringBuilder();
+        String[] names = settings.getAmenityNames();
+        String[] statuses = settings.getAmenityStatuses();
+        for (int i = 0; i < names.length; i++) {
+            amenityLine.append(String.format("Amenity,%s,%s%n", names[i], statuses[i]));
+        }
+        return amenityLine.toString();
+    }
+
+    public String generateResidentDistributionLine(SimulationSettings settings) {
+        StringBuilder residentDistributionLine = new StringBuilder();
+        residentDistributionLine.append("Resident Distribution");
+        int[] residentDistributions = settings.getResidentDistributions();
+        for (int residentDistribution : residentDistributions) {
+            residentDistributionLine.append(String.format(",%d", residentDistribution));
+        }
+        return residentDistributionLine.toString();
     }
 }
