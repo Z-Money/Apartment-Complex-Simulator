@@ -58,6 +58,11 @@ public class ApartmentSimulator {
         try {
             sim.applySetup(stuff);
             sim.beginSimulation();
+            sim.runSimulation();
+            // TODO: Update with method to generate stylized file names with underscores
+            String resultsFileName = String.format("results_%s.csv", sim.complex.getComplexName());
+            String settingsFileName = String.format("settings_%s.csv", sim.complex.getComplexName());
+            sim.finishSimulation(resultsFileName, settingsFileName);
         } catch (InvalidConfigurationException | CapacityExceededException e) {
             throw new RuntimeException(e); // TODO: Connect to GUI
         }
@@ -105,20 +110,24 @@ public class ApartmentSimulator {
     }
 
     public void beginSimulation() throws CapacityExceededException {
-        String complexName = simSettings.getComplexName();
-        int floors = simSettings.getNumberOfFloors();
-        int rooms = simSettings.getRoomsPerFloor();
         buildComplex();
+        simState = new SimulationState();
+        simResults = new SimulationResults(complex.getComplexName());
         ArrayList<Resident> initialResidents = residentGenerator.generateInitialResidents(simSettings.getInitialResidentCount(), simSettings.getResidentDistributions());
         for (Resident resident : initialResidents) complex.placeResident(resident, random);
     }
 
     public void runSimulation() {
-        // TODO: Run 12 times
+        for (int i = 0; i < 12; i++) {
+            runMonth();
+            simState.advanceMonth();
+        }
     }
 
     public void finishSimulation(String resultsFileName, String settingsFileName) {
-        // TODO: Make sim run so I can finish sim
+        simResults.compile(complex, simState, referenceData.getResidentTypes());
+        database.writeSettingsFile(settingsFileName, simSettings);
+        database.writeResultsFile(resultsFileName, simSettings, simResults);
     }
 
     public void buildComplex() {
@@ -146,9 +155,18 @@ public class ApartmentSimulator {
         double qualityScore = calculateQualityScore();
         double operatingCost = calculateOperatingCost();
         double rent = calculateRentPerResident(operatingCost);
+        if (simState.getCurrentMonth() == 1) simState.recordFirstMonthRent(rent);
+        complex.updateNoiseLevels();
         double averageSatisfaction = evaluateResidents(qualityScore, rent);
         int moveOuts = processMoveOuts(averageSatisfaction);
-        processMoveIns(qualityScore, rent);
+        try {
+            processMoveIns(qualityScore, rent);
+        } catch (CapacityExceededException e) {
+            // TODO: Smth smth GUI
+        }
+        double utilityUsage = 0.0;
+        for (Resident resident : complex.getAllResidents()) utilityUsage += resident.calculateUtilityUsage(referenceData.getBaselineUsage());
+        recordMonth(averageSatisfaction, moveOuts, utilityUsage);
     }
 
     private void evaluateAmenities() {
@@ -190,7 +208,7 @@ public class ApartmentSimulator {
         double totalSatisfaction = 0.0, averageSatisfaction = 0.0;
         ArrayList<Resident> residents = complex.getAllResidents();
         for (Resident resident : residents) {
-            totalSatisfaction += resident.calculateSatisfaction(apartmentQualityScore, rent);
+            totalSatisfaction += resident.calculateSatisfaction(apartmentQualityScore, rent, simState.getFirstMonthRent());
         }
         if (!residents.isEmpty()) averageSatisfaction = totalSatisfaction / residents.size();
         return averageSatisfaction;
@@ -201,13 +219,21 @@ public class ApartmentSimulator {
         return moveOuts.size();
     }
 
-    private void processMoveIns(double apartmentQualityScore, double rent) {
+    private void processMoveIns(double apartmentQualityScore, double rent) throws CapacityExceededException {
         int vacantCount = countVacantSpaces();
-//        ResidentGenerator
+        ArrayList<Resident> moveIns = residentGenerator.generateMoveIns(vacantCount, apartmentQualityScore, rent, simState.getFirstMonthRent(), random);
+        for (Resident resident : moveIns) complex.placeResident(resident, random);
     }
 
     private void recordMonth(double averageSatisfaction, int movedOut, double utilityUsage) {
-        // TODO: Store month results in MonthlyRecord and update running totals
+        int monthNumber = simState.getCurrentMonth();
+        int totalResidents = complex.getAllResidents().size();
+        int occupiedSingles = complex.countOccupiedApartments(1);
+        int occupiedDoubles = complex.countOccupiedApartments(2);
+        MonthlyRecord monthlyRecord = new MonthlyRecord(monthNumber, averageSatisfaction, totalResidents, occupiedSingles, occupiedDoubles, movedOut, utilityUsage);
+        simState.addMonthlyRecord(monthlyRecord);
+        simState.addMovedOut(movedOut);
+        simState.addUtilityUsage(utilityUsage);
     }
 
     private int countVacantSpaces() {
