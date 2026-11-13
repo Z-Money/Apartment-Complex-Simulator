@@ -99,7 +99,7 @@ public class ApartmentSimulator {
     public void applySetup(String[] setupLines) throws InvalidConfigurationException {
         simSettings = new SimulationSettings(referenceData);
         ArrayList<String> invalidSettings = simSettings.applyImportedValues(setupLines);
-        if (invalidSettings.isEmpty()) {
+        if (!invalidSettings.isEmpty()) {
             throw new InvalidConfigurationException("Invalid settings: " + invalidSettings.toString(), "settingsFile");
         }
     }
