@@ -98,6 +98,8 @@ public class SimulationSettings {
                 throw new InvalidConfigurationException("Invalid resident distribution", "residentDistribution");
             }
         }
+        if (total != 100) throw new InvalidConfigurationException("Invalid resident distribution", "residentDistribution");
+        residentDistributions = percentages;
     }
 
     public ArrayList<String> applyImportedValues(String[] values) {
