@@ -47,28 +47,76 @@ public class ApartmentComplex {
         amenities.add(amenity);
     }
 
-    public void placeResident(Resident resident, Random random) {
+    public void placeResident(Resident resident, Random random) throws CapacityExceededException {
+        ArrayList<Integer> vacantIndexes = new ArrayList<>();
+        for (int i = 0; i < apartments.size(); i++) {
+            if (apartments.get(i).getVacantSpace() != 0) {
+                vacantIndexes.add(i);
+            }
+        }
+        if (vacantIndexes.isEmpty()) throw new CapacityExceededException("All apartments are currently full", -1, -1); // TODO: Figure out how to handle no floor problems
 
+        int randIndex = random.nextInt(vacantIndexes.size());
+        apartments.get(vacantIndexes.get(randIndex)).addResident(resident);
     }
 
     public void updateNoiseLevels() {
-
+        for (Apartment apartment : apartments) {
+            ArrayList<Resident> residents = apartment.getResidents();
+            ArrayList<Apartment> neighbors = findNeighbors(apartment);
+            double noiseTotal = 0.0, noiseAverage = 0.0;
+            for (Apartment neighbor : neighbors) {
+                noiseTotal += neighbor.calculateNoiseEmission();
+            }
+            noiseAverage = noiseTotal / neighbors.size();
+            for (Resident resident : residents) {
+                resident.setNoiseLevel(noiseAverage);
+            }
+        }
     }
 
     public ArrayList<Resident> processMoveOuts(double averageSatisfaction) {
-        return null;
+        ArrayList<Resident> moveOuts = new ArrayList<>();
+        for (Resident resident : getAllResidents()) {
+            if (resident.shouldMoveOut(averageSatisfaction)) {
+                Apartment apartment = findApartment(resident);
+                apartment.removeResident(resident);
+                moveOuts.add(resident);
+            }
+        }
+        return moveOuts;
     }
 
     public ArrayList<Resident> getAllResidents() {
-        return null;
+        ArrayList<Resident> allResidents = new ArrayList<>();
+        for (Apartment apartment : apartments) {
+            allResidents.addAll(apartment.getResidents());
+        }
+        return allResidents;
     }
 
     public int countOccupiedApartments(int capacity) {
-        return 0;
+        int occupiedApartments = 0;
+        for (Apartment apartment : apartments) {
+            if (apartment.getCapacity() == capacity && apartment.isOccupied()) occupiedApartments++;
+        }
+        return occupiedApartments;
     }
 
     public Apartment findApartment(Resident resident) {
-        return null;
+        Apartment foundApartment = null;
+        boolean found = false;
+        for (Apartment apartment : apartments) {
+            for (Resident apartmentResident : apartment.getResidents()) {
+                if (apartmentResident.equals(resident)) {
+                    foundApartment = apartment;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        return foundApartment;
     }
 
     public String getComplexName() {
@@ -91,7 +139,14 @@ public class ApartmentComplex {
         return amenities;
     }
 
-    private ArrayList<Apartment> findNeighbors(Apartment apartment) {
-        return null;
+    public ArrayList<Apartment> findNeighbors(Apartment apartment) {
+        // Check if bottom floor, top floor, leftMost, or rightMost
+        ArrayList<Apartment> neighbors = new ArrayList<>();
+        int floorNum = apartment.getFloorNumber(), roomNum = apartment.getRoomNumber();
+        if (floorNum < numberOfFloors - 1) neighbors.add(apartments.get((floorNum + 1) * roomsPerFloor + roomNum));
+        if (floorNum > 0) neighbors.add(apartments.get((floorNum - 1) * roomsPerFloor + roomNum));
+        if (roomNum > 0) neighbors.add(apartments.get(floorNum * roomsPerFloor + (roomNum - 1)));
+        if (roomNum < roomsPerFloor - 1) neighbors.add(apartments.get(floorNum * roomsPerFloor + (roomNum + 1)));
+        return neighbors;
     }
 }
