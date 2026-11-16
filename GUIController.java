@@ -1,13 +1,27 @@
 public class GUIController {
     private ApartmentSimulator app;
     private MainWindow mainWindow;
+    private StartPanel startPanel;
     private SetupPanel setupPanel;
+    private ImportPanel importPanel;
+    private ReviewPanel reviewPanel;
     private SimulationPanel simulationPanel;
     private ResultsPanel resultsPanel;
     private String selectedSetupMode;
 
     public GUIController(ApartmentSimulator app) {
         // TODO: Init window and three panels
+        this.app = app;
+        mainWindow = new MainWindow("Apartment Complex Simulator");
+
+        startPanel = new StartPanel(this);
+        setupPanel = new SetupPanel(this);
+
+        mainWindow.addScreen("startPanel", startPanel);
+        mainWindow.addScreen("setupPanel", setupPanel);
+
+        mainWindow.showScreen("startPanel");
+        mainWindow.setVisible(true);
     }
 
     public void showSetupScreen() {
@@ -16,22 +30,32 @@ public class GUIController {
 
     public void handleSetupModeSelected(String mode) {
         // TODO: Record setup mode and enable/disable manual entry
+        selectedSetupMode = mode;
+        switch (mode) {
+            case "default" -> mainWindow.showScreen("defaultPanel");
+            case "manual" -> mainWindow.showScreen("setupPanel");
+            case "import" -> mainWindow.showScreen("importPanel");
+        }
     }
 
-    public void handleSetupSubmitted() {
+    public void handleManualSetupSubmitted() {
         // TODO: Read form values, build settings, report validation error via dialog box
     }
 
-    public void handleImportRequested() {
-        // TODO: Import settings file from user
+    public void handleUseDefaults() {
+
     }
 
-    public void handleStartSimulation() {
-        // TODO: Start simulation after config is shown
+    public void handleChooseImportFile() {
+
     }
 
-    public void handleExit() {
-        // TODO: Close the program
+    public void handleImportFileChosen(String fileName) {
+
+    }
+
+    public void handleUseImportedConfiguration() {
+
     }
 
     public String promptInvalidSetting(String settingName) {
@@ -39,25 +63,32 @@ public class GUIController {
         return "";
     }
 
-    public String chooseFile(boolean forSaving) {
-        // TODO: Open file chooser to open or save files and return fileName
-        return "";
+    public void handleReviewEdit() {
+
     }
 
-    public void showActiveConfiguration(String text) {
-        // TODO: Display active config before first month
+    public void handleStartSimulation() {
+        // TODO: Start simulation after config is shown
     }
 
-    public void updateMonthProgress(MonthlyRecord record, int totalMonths) {
-        // TODO: Update progress bar and add month's data to table
+    public void handleMonthCompleted(MonthlyRecord record, int totalMonths) {
+
     }
 
-    public void showResults(SimulationResults results) {
-        // TODO: Switch to results screen and displays final results
+    public void handleSimulationComplete(SimulationResults results) {
+
     }
 
-    public void showFileNotice(String fileName, boolean success) {
-        // TODO: Tell user if file was written successfully
+    public void handleFileWriteResult(String resultsFileName, boolean resultsSuccess, String settingsFileName, boolean settingsSuccess) {
+
+    }
+
+    public void handleStartOver() {
+
+    }
+
+    public void handleExit() {
+        // TODO: Close the program
     }
 
     public void showError(String message) {
