@@ -43,6 +43,14 @@ public class SetupPanel extends JPanel {
         apartmentTypeBox.addActionListener(e -> {
             updateCapacityDisplay(calcCapacity());
         });
+        for (JTextField field : distributionFields) {
+            field.addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusLost(FocusEvent e) {
+                    updateDistributionTotal(calcDistributionTotal());
+                }
+            });
+        }
     }
 
     private int calcCapacity() {
@@ -53,6 +61,22 @@ public class SetupPanel extends JPanel {
         } catch (NullPointerException | NumberFormatException e) {
             return -1;
         }
+    }
+
+    private int calcDistributionTotal() {
+        int total = 0;
+        for (JTextField field : distributionFields) {
+            try {
+                String fieldContent = field.getText();
+                if (fieldContent.isEmpty()) throw new NullPointerException();
+                total += Integer.parseInt(fieldContent);
+            } catch (NullPointerException e) {
+                total += 0;
+            } catch (NumberFormatException e) {
+                return -1;
+            }
+        }
+        return total;
     }
 
     public String[] getFormValues() {
@@ -75,8 +99,9 @@ public class SetupPanel extends JPanel {
         capacityLabel.setText("Capacity: " + (capacity != -1 ? capacity : "-"));
     }
 
-    public void updateDistributionTotal() {
-
+    public void updateDistributionTotal(int distribution) {
+        String distributionTotalPercentage = distribution != -1 ? (distribution + "%") : "-%";
+        distributionTotalLabel.setText("Distribution total: " + distributionTotalPercentage);
     }
 
     private void buildLayout() {
