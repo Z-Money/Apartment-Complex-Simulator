@@ -5,6 +5,7 @@ public class ApartmentComplex {
     private String complexName;
     private int numberOfFloors;
     private int roomsPerFloor;
+    private String layoutList;
     private ArrayList<Apartment> apartments;
     private ArrayList<Amenity> amenities;
 
@@ -12,6 +13,7 @@ public class ApartmentComplex {
         this.complexName = complexName;
         this.numberOfFloors = numberOfFloors;
         this.roomsPerFloor = roomsPerFloor;
+        layoutList = "";
         apartments = new ArrayList<>();
         amenities = new ArrayList<>();
     }
@@ -34,11 +36,30 @@ public class ApartmentComplex {
                     if (random.nextBoolean() && numOfSingles < maxSingles) {
                         apartment = new SingleApartment(i, j);
                         numOfSingles++;
+                        layoutList += "S";
                     } else {
                         apartment = new DoubleApartment(i, j);
+                        layoutList += "D";
                     }
                     apartments.add(apartment);
                 }
+            }
+        }
+    }
+
+    public void setLayout(String layout) {
+        layoutList = layout;
+        char[] apartmentType = layout.toCharArray();
+        int arrayIndex = 0;
+        for (int i = 0; i < numberOfFloors; i++) {
+            for (int j = 0; j < roomsPerFloor; j++) {
+                Apartment apartment;
+                if (apartmentType[arrayIndex] == 'S') {
+                    apartment = new SingleApartment(i, j);
+                } else {
+                    apartment = new DoubleApartment(i, j);
+                }
+                apartments.add(apartment);
             }
         }
     }
@@ -54,7 +75,8 @@ public class ApartmentComplex {
                 vacantIndexes.add(i);
             }
         }
-        if (vacantIndexes.isEmpty()) throw new CapacityExceededException("All apartments are currently full", -1, -1); // TODO: Figure out how to handle no floor problems
+        if (vacantIndexes.isEmpty())
+            throw new CapacityExceededException("All apartments are currently full", -1, -1); // TODO: Figure out how to handle no floor problems
 
         int randIndex = random.nextInt(vacantIndexes.size());
         apartments.get(vacantIndexes.get(randIndex)).addResident(resident);
@@ -129,6 +151,10 @@ public class ApartmentComplex {
 
     public int getRoomsPerFloor() {
         return this.roomsPerFloor;
+    }
+
+    public String getLayoutList() {
+        return layoutList;
     }
 
     public ArrayList<Apartment> getApartments() {

@@ -90,7 +90,8 @@ public class ApartmentComplexDatabase {
                 String.format("Number of Floors,%d%n", settings.getNumberOfFloors()) +
                 String.format("Rooms per Floor,%d%n", settings.getRoomsPerFloor()) +
                 String.format("Apartment Type,%d%n", settings.getApartmentType()) +
-                String.format("Initial Number of Residents,%d%n", settings.getInitialResidentCount());
+                String.format("Initial Number of Residents,%d%n", settings.getInitialResidentCount()) +
+                String.format("Apartment Layout,%s%n", settings.getBuildingLayout());
     }
 
     public boolean writeResultsFile(String fileName, SimulationSettings settings, SimulationResults results) {

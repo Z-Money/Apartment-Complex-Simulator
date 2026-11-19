@@ -58,6 +58,7 @@ public class ApartmentSimulator {
         try {
             sim.applySetup(stuff);
             sim.beginSimulation();
+            System.out.println(sim.complex.getLayoutList());
             sim.runSimulation();
             String resultsFileName = sim.formatFileName("results");
             String settingsFileName = sim.formatFileName("settings");
@@ -135,7 +136,9 @@ public class ApartmentSimulator {
         int rooms = simSettings.getRoomsPerFloor();
         complex = new ApartmentComplex(complexName, floors, rooms);
         int apartmentType = simSettings.getApartmentType();
-        complex.buildLayout(apartmentType, random);
+        if (simSettings.getBuildingLayout().isEmpty()) complex.buildLayout(apartmentType, random);
+        else complex.setLayout(simSettings.getBuildingLayout());
+        simSettings.setBuildingLayout(complex.getLayoutList());
         String[] amenityNames = simSettings.getAmenityNames();
         String[] amenityStatuses = simSettings.getAmenityStatuses();
         for (int i = 0; i < amenityNames.length; i++) {

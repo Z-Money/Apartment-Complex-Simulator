@@ -7,6 +7,7 @@ public class SimulationSettings {
     private int roomsPerFloor;
     private int apartmentType;
     private int initialResidentCount;
+    private String buildingLayout;
     private String[] amenityNames;
     private String[] amenityStatuses;
     private int[] residentDistributions;
@@ -18,6 +19,7 @@ public class SimulationSettings {
         roomsPerFloor = 0;
         apartmentType = 0;
         initialResidentCount = 0;
+        buildingLayout = "";
         amenityNames = new String[4];
         amenityStatuses = new String[4];
         residentDistributions = new int[4];
@@ -79,6 +81,10 @@ public class SimulationSettings {
         }
     }
 
+    public void setBuildingLayout(String buildingLayout) {
+        this.buildingLayout = buildingLayout;
+    }
+
     public void setAmenityStatus(String name, String status) {
         String[] validAmenityNames = referenceData.getAmenityNames();
         for (int i = 0; i < validAmenityNames.length; i++) {
@@ -113,6 +119,7 @@ public class SimulationSettings {
                     case "Rooms per Floor" -> setRoomsPerFloor(Integer.parseInt(line[1]));
                     case "Apartment Type" -> setApartmentType(Integer.parseInt(line[1]));
                     case "Initial Number of Residents" -> setInitialResidentCount(Integer.parseInt(line[1]), 100);
+                    case "Apartment Layout" -> setBuildingLayout(line[1]);
                     case "Amenity" -> setAmenityStatus(line[1], line[2]);
                     case "Resident Distribution" ->
                             setResidentDistributions(new int[]{Integer.parseInt(line[1]), Integer.parseInt(line[2]), Integer.parseInt(line[3]), Integer.parseInt(line[4])});
@@ -145,6 +152,10 @@ public class SimulationSettings {
 
     public int getInitialResidentCount() {
         return initialResidentCount;
+    }
+
+    public String getBuildingLayout() {
+        return buildingLayout;
     }
 
     public String[] getAmenityNames() {
