@@ -6,6 +6,7 @@ public class SimulationSettings {
     private int numberOfFloors;
     private int roomsPerFloor;
     private int apartmentType;
+    private int initialOccupancyPercentage;
     private int initialResidentCount;
     private String buildingLayout;
     private String[] amenityNames;
@@ -18,6 +19,7 @@ public class SimulationSettings {
         numberOfFloors = 0;
         roomsPerFloor = 0;
         apartmentType = 0;
+        initialOccupancyPercentage = -1;
         initialResidentCount = 0;
         buildingLayout = "";
         amenityNames = new String[4];
@@ -33,8 +35,8 @@ public class SimulationSettings {
         residentDistributions = referenceData.getDefaultDistribution();
     }
 
-    public int calculateDefaultResidentCount(int capacity) {
-        return (int) (capacity * (double) (referenceData.getDefaultOccupancyPercent() / 100));
+    public int calculateResidentCount(int occupancyPercent, int capacity) {
+        return (int) (capacity * (double) (occupancyPercent / 100));
     }
 
     public void setComplexName(String name) throws InvalidConfigurationException {
@@ -70,6 +72,14 @@ public class SimulationSettings {
             apartmentType = type;
         } else {
             throw new InvalidConfigurationException("Invalid apartment type", "apartmentType");
+        }
+    }
+
+    public void setInitialOccupancyPercentage(int initialOccupancyPercentage) throws InvalidConfigurationException {
+        if (initialOccupancyPercentage >= 0 && initialOccupancyPercentage <= 100) {
+            this.initialOccupancyPercentage = initialOccupancyPercentage;
+        } else {
+            throw new InvalidConfigurationException("Invalid initial resident count", "initialOccupancyPercentage");
         }
     }
 
@@ -119,6 +129,7 @@ public class SimulationSettings {
                     case "Rooms per Floor" -> setRoomsPerFloor(Integer.parseInt(line[1]));
                     case "Apartment Type" -> setApartmentType(Integer.parseInt(line[1]));
                     case "Initial Number of Residents" -> setInitialResidentCount(Integer.parseInt(line[1]), 100);
+                    case "Occupancy Percentage" -> setInitialOccupancyPercentage(Integer.parseInt(line[1]));
                     case "Apartment Layout" -> setBuildingLayout(line[1]);
                     case "Amenity" -> setAmenityStatus(line[1], line[2]);
                     case "Resident Distribution" ->
@@ -148,6 +159,10 @@ public class SimulationSettings {
 
     public int getApartmentType() {
         return apartmentType;
+    }
+
+    public int getInitialOccupancyPercentage() {
+        return initialOccupancyPercentage;
     }
 
     public int getInitialResidentCount() {

@@ -27,7 +27,7 @@ public class ApartmentComplex {
                 }
             }
         } else {
-            double percentSplit = (double) random.nextInt(30, 60) / 100;
+            double percentSplit = (double) random.nextInt(30, 61) / 100;
             int maxSingles = (int) (percentSplit * (numberOfFloors * roomsPerFloor));
             int numOfSingles = 0;
             for (int i = 0; i < numberOfFloors; i++) {

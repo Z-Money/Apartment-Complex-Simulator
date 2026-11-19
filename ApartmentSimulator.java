@@ -1,10 +1,5 @@
-import com.formdev.flatlaf.FlatLightLaf;
-
-import java.awt.FlowLayout;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Random;
-import javax.swing.*;
 
 public class ApartmentSimulator {
     private ReferenceData referenceData;
@@ -14,7 +9,7 @@ public class ApartmentSimulator {
     private ResidentGenerator residentGenerator;
     private SimulationState simState;
     private SimulationResults simResults;
-//    private GUIController guiController;
+    private GUIController guiController;
     private Random random;
 
     public ApartmentSimulator() {
@@ -90,13 +85,10 @@ public class ApartmentSimulator {
         }
     }
 
-    public int calculateResidentCapacity(int floors, int rooms, int apartmentType) {
-        int capacity;
-        if (apartmentType == 1) {
-            capacity = rooms * floors;
-        } else {
-            // TODO: Get total num of singles/doubles and calc capacity using nums
-            capacity = -1;
+    public int calculateResidentCapacity() {
+        int capacity = 0;
+        for (Apartment apartment : complex.getApartments()) {
+            capacity += apartment.getCapacity();
         }
         return capacity;
     }
@@ -113,7 +105,10 @@ public class ApartmentSimulator {
         buildComplex();
         simState = new SimulationState();
         simResults = new SimulationResults(complex.getComplexName());
-        ArrayList<Resident> initialResidents = residentGenerator.generateInitialResidents(simSettings.getInitialResidentCount(), simSettings.getResidentDistributions());
+        int initialResidentCount;
+        if (simSettings.getInitialOccupancyPercentage() == -1) initialResidentCount = simSettings.calculateResidentCount(simSettings.getInitialOccupancyPercentage(), calculateResidentCapacity());
+        else initialResidentCount = simSettings.getInitialResidentCount();
+        ArrayList<Resident> initialResidents = residentGenerator.generateInitialResidents(initialResidentCount, simSettings.getResidentDistributions());
         for (Resident resident : initialResidents) complex.placeResident(resident, random);
     }
 
@@ -138,7 +133,6 @@ public class ApartmentSimulator {
         int apartmentType = simSettings.getApartmentType();
         if (simSettings.getBuildingLayout().isEmpty()) complex.buildLayout(apartmentType, random);
         else complex.setLayout(simSettings.getBuildingLayout());
-        simSettings.setBuildingLayout(complex.getLayoutList());
         String[] amenityNames = simSettings.getAmenityNames();
         String[] amenityStatuses = simSettings.getAmenityStatuses();
         for (int i = 0; i < amenityNames.length; i++) {
