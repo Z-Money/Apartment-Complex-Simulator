@@ -10,7 +10,7 @@ public class SetupPanel extends JPanel {
     private JTextField floorsField;
     private JTextField roomsPerFloorField;
     private JComboBox<String> apartmentTypeBox;
-    private JTextField initialResidentsField;
+    private JTextField initialOccupancyField;
     private JLabel capacityLabel;
     private ArrayList<JCheckBox> amenityChecks;
     private ArrayList<JComboBox<String>> amenityStatusBoxes;
@@ -53,13 +53,15 @@ public class SetupPanel extends JPanel {
         }
     }
 
-    private int calcCapacity() {
+    private int[] calcCapacity() {
         try {
             int floors = Integer.parseInt(floorsField.getText());
             int rooms = Integer.parseInt(roomsPerFloorField.getText());
-            return apartmentTypeBox.getSelectedIndex() == 0 ? floors * rooms : (int) (floors * (rooms * 1.5));
+            int mixedLower = (int) ((rooms * floors * 0.6) + ((2 * rooms) * floors * 0.4));
+            int mixedHigher = (int) ((rooms * floors * 0.3) + ((2 * rooms) * floors * 0.7));
+            return apartmentTypeBox.getSelectedIndex() == 0 ? new int[]{floors * rooms} : new int[]{mixedLower, mixedHigher};
         } catch (NullPointerException | NumberFormatException e) {
-            return -1;
+            return null;
         }
     }
 
@@ -95,8 +97,12 @@ public class SetupPanel extends JPanel {
 
     }
 
-    public void updateCapacityDisplay(int capacity) {
-        capacityLabel.setText("Capacity: " + (capacity != -1 ? capacity : "-"));
+    public void updateCapacityDisplay(int[] capacity) {
+        String capacityStr = "Max capacity: ";
+        if (capacity == null) capacityStr += "-";
+        else if (capacity.length == 1) capacityStr += capacity[0];
+        else capacityStr += String.format("%d - %d", capacity[0], capacity[1]);
+        capacityLabel.setText(capacityStr);
     }
 
     public void updateDistributionTotal(int distribution) {
@@ -125,10 +131,10 @@ public class SetupPanel extends JPanel {
         complexNameField = setupTextField("Apartment Complex");
         floorsField = setupTextField("2-8");
         roomsPerFloorField = setupTextField("4-12");
-        initialResidentsField = setupTextField("1 to calculated capacity");
+        initialOccupancyField = setupTextField("0-100");
         apartmentTypeBox = new JComboBox<>(new String[]{"1 - Singles only", "2 - Randomized Singles & Doubles"});
         styleSetupInput(apartmentTypeBox);
-        capacityLabel = setupLabel("Capacity: -", 12, false);
+        capacityLabel = setupLabel("Max capacity: -", 12, false);
         amenityChecks = new ArrayList<>();
         amenityStatusBoxes = new ArrayList<>();
         distributionFields = new ArrayList<>();
@@ -202,7 +208,7 @@ public class SetupPanel extends JPanel {
         fields.add(setupField("Number of Floors", floorsField, setupLabel("2-8", 12, false), 1));
         fields.add(setupField("Rooms per Floor", roomsPerFloorField, setupLabel("4-12", 12, false), 2));
         fields.add(setupField("Apartment Type", apartmentTypeBox, null, 3));
-        fields.add(setupField("Initial Residents", initialResidentsField, capacityLabel, 4));
+        fields.add(setupField("Initial Occupancy Percentage", initialOccupancyField, capacityLabel, 4));
         return setupCard("Building & Residents", fields);
     }
 
