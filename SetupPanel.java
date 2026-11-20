@@ -118,7 +118,23 @@ public class SetupPanel extends JPanel {
     }
 
     public void setFormValues(String[] values) {
-
+        complexNameField.setText(values[0]);
+        floorsField.setText(values[1]);
+        roomsPerFloorField.setText(values[2]);
+        apartmentTypeBox.setSelectedIndex(Integer.parseInt(values[3]) == 1 ? 0 : 1);
+        initialOccupancyField.setText(values[4]);
+        for (int i = 0; i < amenityStatusBoxes.size(); i++) {
+            ArrayList<String> options = new ArrayList<>();
+            amenityChecks.get(i).setSelected(Boolean.parseBoolean(values[5+2*i]));
+            for (int j = 0; j < amenityStatusBoxes.get(i).getItemCount(); j++) {
+                options.add(amenityStatusBoxes.get(i).getItemAt(j));
+            }
+            int optionIndex = options.indexOf(values[6+2*i]);
+            amenityStatusBoxes.get(i).setSelectedIndex(optionIndex != -1 ? optionIndex : 0);
+        }
+        for (int i = 0; i < distributionFields.size(); i++) {
+            distributionFields.get(i).setText(values[13+i]);
+        }
     }
 
     public void showFieldErrors(String settingName, String message) {

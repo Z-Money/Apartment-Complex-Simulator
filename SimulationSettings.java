@@ -32,7 +32,12 @@ public class SimulationSettings {
         numberOfFloors = referenceData.getDefaultFloors();
         roomsPerFloor = referenceData.getDefaultRoomsPerFloor();
         apartmentType = referenceData.getDefaultApartmentType();
+        initialOccupancyPercentage = referenceData.getDefaultOccupancyPercent();
         residentDistributions = referenceData.getDefaultDistribution();
+        for (String amenityName : referenceData.getAmenityNames()) {
+            amenityNames.add(amenityName);
+            amenityStatuses.add("FULL_OPERATION");
+        }
     }
 
     public int calculateResidentCount(int occupancyPercent, int capacity) {
@@ -183,5 +188,23 @@ public class SimulationSettings {
 
     public int[] getResidentDistributions() {
         return residentDistributions;
+    }
+
+    public String[] getDefaultFormValues() {
+        ArrayList<String> defaultFormValues = new ArrayList<>();
+        defaultFormValues.add(referenceData.getDefaultComplexName());
+        defaultFormValues.add(String.valueOf(referenceData.getDefaultFloors()));
+        defaultFormValues.add(String.valueOf(referenceData.getDefaultRoomsPerFloor()));
+        defaultFormValues.add(String.valueOf(referenceData.getDefaultApartmentType()));
+        defaultFormValues.add(String.valueOf(referenceData.getDefaultOccupancyPercent()));
+        for (String amenityName : referenceData.getAmenityNames()) {
+            int index = amenityNames.indexOf(amenityName);
+            defaultFormValues.add(index >= 0 ? "true" : "false");
+            defaultFormValues.add(index >= 0 ? amenityStatuses.get(index) : "FULL_OPERATION");
+        }
+        for (int percent : referenceData.getDefaultDistribution()) {
+            defaultFormValues.add(String.valueOf(percent));
+        }
+        return defaultFormValues.toArray(new String[0]);
     }
 }

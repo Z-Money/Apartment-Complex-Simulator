@@ -60,7 +60,9 @@ public class GUIController {
     }
 
     public void handleUseDefaults() {
-
+        app.useDefaultSetup();
+        setupPanel.setFormValues(app.getDefaultFormValues());
+        setupPanel.clearFieldErrors();
     }
 
     public void handleChooseImportFile() {

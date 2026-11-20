@@ -24,6 +24,7 @@ public class ApartmentSimulator {
         } catch (InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
+        simSettings = new SimulationSettings(referenceData);
         residentGenerator = new ResidentGenerator(referenceData.getResidentTypes());
 //        guiController = new GUIController();
     }
@@ -77,13 +78,11 @@ public class ApartmentSimulator {
     }
 
     public void useDefaultSetup() {
-        try {
-            referenceData = database.readReferenceData("test.csv");
-            simSettings = new SimulationSettings(referenceData);
-            simSettings.loadDefaults();
-        } catch (InvalidConfigurationException e) {
-            // TODO: Do stuff with GUI
-        }
+        simSettings.loadDefaults();
+    }
+
+    public String[] getDefaultFormValues() {
+        return simSettings.getDefaultFormValues();
     }
 
     public String[] importSetup(String fileName) {
@@ -103,7 +102,6 @@ public class ApartmentSimulator {
     }
 
     public void applySetup(String[] setupLines) throws InvalidConfigurationException {
-        simSettings = new SimulationSettings(referenceData);
         ArrayList<String> invalidSettings = simSettings.applyImportedValues(setupLines);
         if (!invalidSettings.isEmpty()) {
             throw new InvalidConfigurationException("Invalid settings: " + invalidSettings.toString(), "settingsFile");
