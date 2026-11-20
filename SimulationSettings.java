@@ -103,7 +103,7 @@ public class SimulationSettings {
     public void setAmenityStatus(String name, String status) {
         String[] validAmenityNames = referenceData.getAmenityNames();
         for (int i = 0; i < validAmenityNames.length; i++) {
-            if (name.equals(validAmenityNames[i])) {
+            if (name.equals(validAmenityNames[i]) && !amenityNames.contains(name)) {
                 amenityNames.add(name);
                 amenityStatuses.add(status);
             }
