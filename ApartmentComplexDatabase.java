@@ -67,8 +67,8 @@ public class ApartmentComplexDatabase {
 
     public String generateAmenityLines(SimulationSettings settings) {
         StringBuilder amenityLine = new StringBuilder();
-        String[] names = settings.getAmenityNames();
-        String[] statuses = settings.getAmenityStatuses();
+        String[] names = settings.getAmenityNames().toArray(new String[0]);
+        String[] statuses = settings.getAmenityStatuses().toArray(new String[0]);
         for (int i = 0; i < names.length; i++) {
             amenityLine.append(String.format("Amenity,%s,%s%n", names[i], statuses[i]));
         }

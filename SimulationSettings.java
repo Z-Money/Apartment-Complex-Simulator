@@ -9,8 +9,8 @@ public class SimulationSettings {
     private int initialOccupancyPercentage;
     private int initialResidentCount;
     private String buildingLayout;
-    private String[] amenityNames;
-    private String[] amenityStatuses;
+    private ArrayList<String> amenityNames;
+    private ArrayList<String> amenityStatuses;
     private int[] residentDistributions;
 
     public SimulationSettings(ReferenceData referenceData) {
@@ -19,11 +19,11 @@ public class SimulationSettings {
         numberOfFloors = 0;
         roomsPerFloor = 0;
         apartmentType = 0;
-        initialOccupancyPercentage = -1;
-        initialResidentCount = 0;
+        initialOccupancyPercentage = 0;
+        initialResidentCount = -1;
         buildingLayout = "";
-        amenityNames = new String[4];
-        amenityStatuses = new String[4];
+        amenityNames = new ArrayList<>();
+        amenityStatuses = new ArrayList<>();
         residentDistributions = new int[4];
     }
 
@@ -36,7 +36,7 @@ public class SimulationSettings {
     }
 
     public int calculateResidentCount(int occupancyPercent, int capacity) {
-        return (int) (capacity * (double) (occupancyPercent / 100));
+        return (int) (capacity * ( (double) occupancyPercent / 100));
     }
 
     public void setComplexName(String name) throws InvalidConfigurationException {
@@ -83,8 +83,8 @@ public class SimulationSettings {
         }
     }
 
-    public void setInitialResidentCount(int count, int capacity) throws InvalidConfigurationException {
-        if (count >= 1 && count <= capacity) {
+    public void setInitialResidentCount(int count) throws InvalidConfigurationException {
+        if (count >= 1) {
             initialResidentCount = count;
         } else {
             throw new InvalidConfigurationException("Invalid initial resident count", "initialResidentCount");
@@ -99,8 +99,8 @@ public class SimulationSettings {
         String[] validAmenityNames = referenceData.getAmenityNames();
         for (int i = 0; i < validAmenityNames.length; i++) {
             if (name.equals(validAmenityNames[i])) {
-                amenityNames[i] = name;
-                amenityStatuses[i] = status;
+                amenityNames.add(name);
+                amenityStatuses.add(status);
             }
         }
     }
@@ -128,7 +128,7 @@ public class SimulationSettings {
                     case "Number of Floors" -> setNumberOfFloors(Integer.parseInt(line[1]));
                     case "Rooms per Floor" -> setRoomsPerFloor(Integer.parseInt(line[1]));
                     case "Apartment Type" -> setApartmentType(Integer.parseInt(line[1]));
-                    case "Initial Number of Residents" -> setInitialResidentCount(Integer.parseInt(line[1]), 100);
+                    case "Initial Number of Residents" -> setInitialResidentCount(Integer.parseInt(line[1]));
                     case "Occupancy Percentage" -> setInitialOccupancyPercentage(Integer.parseInt(line[1]));
                     case "Apartment Layout" -> setBuildingLayout(line[1]);
                     case "Amenity" -> setAmenityStatus(line[1], line[2]);
@@ -173,11 +173,11 @@ public class SimulationSettings {
         return buildingLayout;
     }
 
-    public String[] getAmenityNames() {
+    public ArrayList<String> getAmenityNames() {
         return amenityNames;
     }
 
-    public String[] getAmenityStatuses() {
+    public ArrayList<String> getAmenityStatuses() {
         return amenityStatuses;
     }
 
