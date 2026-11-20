@@ -1,3 +1,6 @@
+import com.formdev.flatlaf.FlatLightLaf;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,6 +16,7 @@ public class ApartmentSimulator {
     private Random random;
 
     public ApartmentSimulator() {
+        guiController = new GUIController(this);
         database = new ApartmentComplexDatabase();
         random = new Random();
         try {
@@ -25,6 +29,12 @@ public class ApartmentSimulator {
     }
 
     public static void main(String[] args) {
+        System.setProperty("flatlaf.useNativeLibrary", "false");
+        FlatLightLaf.setup();
+        SwingUtilities.invokeLater(() -> {
+            ApartmentSimulator sim = new ApartmentSimulator();
+            sim.runSimulator();
+        });
 //        System.setProperty("flatlaf.useNativeLibrary", "false");
 //        FlatLightLaf.setup();
 //
@@ -48,23 +58,22 @@ public class ApartmentSimulator {
 //            ReferenceData refData = db.readReferenceData("test.csv");
 //            SimulationSettings simSettings = new SimulationSettings(refData);
 //            ArrayList<String> invalidValues = simSettings.applyImportedValues(db.readSettingsFile("settings.csv"));
-        ApartmentSimulator sim = new ApartmentSimulator();
-        String[] stuff = sim.importSetup("settings.csv");
-        try {
-            sim.applySetup(stuff);
-            sim.beginSimulation();
-            System.out.println(sim.complex.getLayoutList());
-            sim.runSimulation();
-            String resultsFileName = sim.formatFileName("results");
-            String settingsFileName = sim.formatFileName("settings");
-            sim.finishSimulation(resultsFileName, settingsFileName);
-        } catch (InvalidConfigurationException | CapacityExceededException e) {
-            throw new RuntimeException(e); // TODO: Connect to GUI
-        }
+        //OLD CODE HERE
+//        String[] stuff = sim.importSetup("settings.csv");
+//        try {
+//            sim.applySetup(stuff);
+//            sim.beginSimulation();
+//            sim.runSimulation();
+//            String resultsFileName = sim.formatFileName("results");
+//            String settingsFileName = sim.formatFileName("settings");
+//            sim.finishSimulation(resultsFileName, settingsFileName);
+//        } catch (InvalidConfigurationException | CapacityExceededException e) {
+//            throw new RuntimeException(e); // TODO: Connect to GUI
+//        }
     }
 
     public void runSimulator() {
-        // TODO: Start GUI
+        guiController.startGUI();
     }
 
     public void useDefaultSetup() {
@@ -101,12 +110,15 @@ public class ApartmentSimulator {
         }
     }
 
-    public void beginSimulation() throws CapacityExceededException {
+    public void beginSimulation() throws CapacityExceededException, InvalidConfigurationException {
         buildComplex();
         simState = new SimulationState();
         simResults = new SimulationResults(complex.getComplexName());
         int initialResidentCount;
-        if (simSettings.getInitialOccupancyPercentage() == -1) initialResidentCount = simSettings.calculateResidentCount(simSettings.getInitialOccupancyPercentage(), calculateResidentCapacity());
+        if (simSettings.getInitialResidentCount() == -1) {
+            initialResidentCount = simSettings.calculateResidentCount(simSettings.getInitialOccupancyPercentage(), calculateResidentCapacity());
+            simSettings.setInitialResidentCount(initialResidentCount);
+        }
         else initialResidentCount = simSettings.getInitialResidentCount();
         ArrayList<Resident> initialResidents = residentGenerator.generateInitialResidents(initialResidentCount, simSettings.getResidentDistributions());
         for (Resident resident : initialResidents) complex.placeResident(resident, random);
@@ -131,10 +143,13 @@ public class ApartmentSimulator {
         int rooms = simSettings.getRoomsPerFloor();
         complex = new ApartmentComplex(complexName, floors, rooms);
         int apartmentType = simSettings.getApartmentType();
-        if (simSettings.getBuildingLayout().isEmpty()) complex.buildLayout(apartmentType, random);
+        if (simSettings.getBuildingLayout().isEmpty()) {
+            complex.buildLayout(apartmentType, random);
+            simSettings.setBuildingLayout(complex.getLayoutList());
+        }
         else complex.setLayout(simSettings.getBuildingLayout());
-        String[] amenityNames = simSettings.getAmenityNames();
-        String[] amenityStatuses = simSettings.getAmenityStatuses();
+        String[] amenityNames = simSettings.getAmenityNames().toArray(new String[0]);
+        String[] amenityStatuses = simSettings.getAmenityStatuses().toArray(new String[0]);
         for (int i = 0; i < amenityNames.length; i++) {
             try {
                 Amenity amenity = referenceData.createAmenity(amenityNames[i], amenityStatuses[i]);
@@ -238,7 +253,7 @@ public class ApartmentSimulator {
         return vacantSpaces;
     }
 
-    private String formatFileName(String fileName) {
+    public String formatFileName(String fileName) {
         String complexName = complex.getComplexName().toLowerCase();
         String newFileName = fileName;
         for (String s : complexName.split(" ")) {

@@ -25,6 +25,13 @@ public class SetupPanel extends JPanel {
         this.controller = controller;
         buildLayout();
         setListeners();
+        applyButtonFunc();
+    }
+
+    private void applyButtonFunc() {
+        useDefaultButtons.addActionListener(e -> controller.handleUseDefaults());
+        submitButton.addActionListener(e -> controller.handleManualSetupSubmitted());
+        cancelButton.addActionListener(e -> controller.returnToStart());
     }
 
     private void setListeners() {
@@ -82,6 +89,31 @@ public class SetupPanel extends JPanel {
     }
 
     public String[] getFormValues() {
+        ArrayList<String> formValues = new ArrayList<>();
+        try {
+            formValues.add(String.format("Complex Name,%s", complexNameField.getText()));
+            formValues.add(String.format("Number of Floors,%s", floorsField.getText()));
+            formValues.add(String.format("Rooms per Floor,%s", roomsPerFloorField.getText()));
+            String apartmentType = apartmentTypeBox.getSelectedIndex() == 0 ? "1" : "2";
+            formValues.add(String.format("Apartment Type,%s", apartmentType));
+            formValues.add(String.format("Occupancy Percentage,%s", initialOccupancyField.getText()));
+            String[] amenityNames = new String[]{"Laundry Machines", "Pool", "Gym", "Security"};
+            for (int i = 0; i < 4; i++) {
+                if (amenityChecks.get(i).isSelected()) {
+                    String amenityName = amenityNames[i];
+                    String amenityStatus = String.valueOf(amenityStatusBoxes.get(i).getSelectedItem());
+                    amenityStatus = String.join("_", amenityStatus.toUpperCase().split(" "));
+                    formValues.add(String.format("Amenity,%s,%s", amenityName, amenityStatus));
+                }
+            }
+            StringBuilder distributionStr = new StringBuilder("Resident Distribution");
+            for (JTextField distributionPercentage : distributionFields)
+                distributionStr.append(String.format(",%s", distributionPercentage.getText()));
+            formValues.add(distributionStr.toString());
+            return formValues.toArray(new String[0]);
+        } catch (NullPointerException e) {
+            // TODO: Do smth prob
+        }
         return null;
     }
 

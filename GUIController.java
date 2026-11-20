@@ -19,9 +19,15 @@ public class GUIController {
 
         mainWindow.addScreen("startPanel", startPanel);
         mainWindow.addScreen("setupPanel", setupPanel);
+    }
 
+    public void startGUI() {
         mainWindow.showScreen("startPanel");
         mainWindow.setVisible(true);
+    }
+
+    public void returnToStart() {
+        mainWindow.showScreen("startPanel");
     }
 
     public void showSetupScreen() {
@@ -32,7 +38,7 @@ public class GUIController {
         // TODO: Record setup mode and enable/disable manual entry
         selectedSetupMode = mode;
         switch (mode) {
-            case "default" -> mainWindow.showScreen("defaultPanel");
+            case "default" -> mainWindow.showScreen("reviewPanel");
             case "manual" -> mainWindow.showScreen("setupPanel");
             case "import" -> mainWindow.showScreen("importPanel");
         }
@@ -40,6 +46,17 @@ public class GUIController {
 
     public void handleManualSetupSubmitted() {
         // TODO: Read form values, build settings, report validation error via dialog box
+        String[] formValues = setupPanel.getFormValues();
+        try {
+            app.applySetup(formValues);
+            app.beginSimulation();
+            app.runSimulation();
+            String resultsFileName = app.formatFileName("results");
+            String settingsFileName = app.formatFileName("settings");
+            app.finishSimulation(resultsFileName, settingsFileName);
+        } catch (InvalidConfigurationException | CapacityExceededException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void handleUseDefaults() {
