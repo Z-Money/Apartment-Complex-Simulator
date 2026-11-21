@@ -85,6 +85,15 @@ public class ApartmentSimulator {
         return simSettings.getDefaultFormValues();
     }
 
+    public String[] getReviewText() {
+        String[] simValues = simSettings.toDisplayText();
+        simValues[10] = String.valueOf(complex.getApartments().size());
+        int capacity = 0;
+        for (Apartment apartment : complex.getApartments()) capacity += apartment.getCapacity();
+        simValues[11] = String.valueOf(capacity);
+        return simValues;
+    }
+
     public String[] importSetup(String fileName) {
         try {
             return database.readSettingsFile(fileName);
@@ -141,7 +150,8 @@ public class ApartmentSimulator {
         int rooms = simSettings.getRoomsPerFloor();
         complex = new ApartmentComplex(complexName, floors, rooms);
         int apartmentType = simSettings.getApartmentType();
-        if (simSettings.getBuildingLayout().isEmpty()) {
+        // FIXME: ISSUE
+        if (simSettings.getBuildingLayout().isEmpty() || !guiController.getSelectedSetupMode().equals("import")) {
             complex.buildLayout(apartmentType, random);
             simSettings.setBuildingLayout(complex.getLayoutList());
         }

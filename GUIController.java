@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GUIController {
     private ApartmentSimulator app;
@@ -18,9 +19,11 @@ public class GUIController {
 
         startPanel = new StartPanel(this);
         setupPanel = new SetupPanel(this);
+        reviewPanel = new ReviewPanel(this);
 
         mainWindow.addScreen("startPanel", startPanel);
         mainWindow.addScreen("setupPanel", setupPanel);
+        mainWindow.addScreen("reviewPanel", reviewPanel);
     }
 
     public void startGUI() {
@@ -40,7 +43,7 @@ public class GUIController {
         // TODO: Record setup mode and enable/disable manual entry
         selectedSetupMode = mode;
         switch (mode) {
-            case "default" -> mainWindow.showScreen("reviewPanel");
+            case "default" -> handleUseDefaults();
             case "manual" -> mainWindow.showScreen("setupPanel");
             case "import" -> mainWindow.showScreen("importPanel");
         }
@@ -56,6 +59,13 @@ public class GUIController {
                 for (InvalidConfigurationException error : errors) {
                     setupPanel.showFieldErrors(error.getSettingName(), error.getMessage());
                 }
+            } else {
+                if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(formValues, setupPanel.getRetrievedSettings())) {
+                    app.buildComplex();
+                    setupPanel.setRetrievedSettings(formValues);
+                }
+                reviewPanel.displayConfiguration(app.getReviewText());
+                mainWindow.showScreen("reviewPanel");
             }
 //            app.beginSimulation();
 //            app.runSimulation();
@@ -67,10 +77,20 @@ public class GUIController {
 //        }
     }
 
-    public void handleUseDefaults() {
+    public void loadDefaultSetupValues() {
         app.useDefaultSetup();
         setupPanel.setFormValues(app.getDefaultFormValues());
         setupPanel.clearFieldErrors();
+    }
+
+    public void handleUseDefaults() {
+        if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(app.getReviewText(), setupPanel.getRetrievedSettings())) {
+            app.useDefaultSetup();
+            app.buildComplex();
+            setupPanel.setRetrievedSettings(app.getReviewText());
+        }
+        reviewPanel.displayConfiguration(app.getReviewText());
+        mainWindow.showScreen("reviewPanel");
     }
 
     public void handleChooseImportFile() {
@@ -91,7 +111,11 @@ public class GUIController {
     }
 
     public void handleReviewEdit() {
-
+        switch (selectedSetupMode) {
+            case "default" -> mainWindow.showScreen("startPanel");
+            case "manual" -> mainWindow.showScreen("setupPanel");
+            case "import" -> mainWindow.showScreen("importPanel");
+        }
     }
 
     public void handleStartSimulation() {
@@ -120,5 +144,9 @@ public class GUIController {
 
     public void showError(String message) {
         // TODO: Displays error messages to user via dialog box
+    }
+
+    public String getSelectedSetupMode() {
+        return selectedSetupMode;
     }
 }

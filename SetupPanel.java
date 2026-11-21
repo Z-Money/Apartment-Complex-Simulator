@@ -20,6 +20,7 @@ public class SetupPanel extends JPanel {
     private JButton submitButton;
     private JButton cancelButton;
     private ArrayList<JLabel> errorLabels;
+    private String[] retrievedSettings;
 
     public SetupPanel(GUIController controller) {
         this.controller = controller;
@@ -29,7 +30,7 @@ public class SetupPanel extends JPanel {
     }
 
     private void applyButtonFunc() {
-        useDefaultButtons.addActionListener(e -> controller.handleUseDefaults());
+        useDefaultButtons.addActionListener(e -> controller.loadDefaultSetupValues());
         submitButton.addActionListener(e -> controller.handleManualSetupSubmitted());
         cancelButton.addActionListener(e -> controller.returnToStart());
     }
@@ -401,5 +402,13 @@ public class SetupPanel extends JPanel {
         button.putClientProperty("JComponent.minimumHeight", 44);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.putClientProperty("FlatLaf.style", "arc: 16; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " + "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " + "borderColor: " + (primary ? "#315ff4" : "#dce0e5") + "; " + "focusedBorderColor: #000000; focusedBackground: " + fill + "; " + "hoverBackground: " + fill + "; pressedBackground: " + fill);
+    }
+
+    public void setRetrievedSettings(String[] settings) {
+        retrievedSettings = settings;
+    }
+
+    public String[] getRetrievedSettings() {
+        return retrievedSettings;
     }
 }
