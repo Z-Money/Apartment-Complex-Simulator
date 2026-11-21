@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class GUIController {
     private ApartmentSimulator app;
     private MainWindow mainWindow;
@@ -47,16 +49,22 @@ public class GUIController {
     public void handleManualSetupSubmitted() {
         // TODO: Read form values, build settings, report validation error via dialog box
         String[] formValues = setupPanel.getFormValues();
-        try {
-            app.applySetup(formValues);
-            app.beginSimulation();
-            app.runSimulation();
-            String resultsFileName = app.formatFileName("results");
-            String settingsFileName = app.formatFileName("settings");
-            app.finishSimulation(resultsFileName, settingsFileName);
-        } catch (InvalidConfigurationException | CapacityExceededException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+            ArrayList<InvalidConfigurationException> errors = app.applySetup(formValues);
+            if (!errors.isEmpty()) {
+                setupPanel.clearFieldErrors();
+                for (InvalidConfigurationException error : errors) {
+                    setupPanel.showFieldErrors(error.getSettingName(), error.getMessage());
+                }
+            }
+//            app.beginSimulation();
+//            app.runSimulation();
+//            String resultsFileName = app.formatFileName("results");
+//            String settingsFileName = app.formatFileName("settings");
+//            app.finishSimulation(resultsFileName, settingsFileName);
+//        } catch (InvalidConfigurationException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public void handleUseDefaults() {

@@ -101,11 +101,11 @@ public class ApartmentSimulator {
         return capacity;
     }
 
-    public void applySetup(String[] setupLines) throws InvalidConfigurationException {
-        ArrayList<String> invalidSettings = simSettings.applyImportedValues(setupLines);
-        if (!invalidSettings.isEmpty()) {
-            throw new InvalidConfigurationException("Invalid settings: " + invalidSettings.toString(), "settingsFile");
-        }
+    public ArrayList<InvalidConfigurationException> applySetup(String[] setupLines) {
+        SimulationSettings candidate = new SimulationSettings(referenceData);
+        ArrayList<InvalidConfigurationException> invalidSettings = candidate.applyImportedValues(setupLines);
+        if (invalidSettings.isEmpty()) simSettings = candidate;
+        return invalidSettings;
     }
 
     public void beginSimulation() throws CapacityExceededException, InvalidConfigurationException {

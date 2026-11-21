@@ -138,11 +138,30 @@ public class SetupPanel extends JPanel {
     }
 
     public void showFieldErrors(String settingName, String message) {
-
+        // Find error with that settingName
+        // errors.get(), setText(message), setVisible(true)
+        String[] fieldNames = {"Complex Name", "Number of Floors", "Rooms per Floor", "Apartment Type", "Occupancy Percentage", "Laundry Machines", "Pool", "Gym", "Security", "No-Maintenance", "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
+        if ("Resident Distribution".equals(settingName)) {
+            for (int i = 9; i < 13; i++) {
+                JLabel errorLabel = errorLabels.get(i);
+                errorLabel.setText(message);
+                errorLabel.setVisible(true);
+            }
+        }
+        for (int i = 0; i < fieldNames.length; i++) {
+            if (fieldNames[i].equals(settingName)) {
+                JLabel errorLabel = errorLabels.get(i);
+                errorLabel.setText(message);
+                errorLabel.setVisible(true);
+            }
+        }
     }
 
     public void clearFieldErrors() {
-
+        for (JLabel error : errorLabels) {
+            error.setText("");
+            error.setVisible(false);
+        }
     }
 
     public void updateCapacityDisplay(int[] capacity) {
@@ -203,8 +222,8 @@ public class SetupPanel extends JPanel {
     }
 
     // Error indices:
-// 0=name, 1=floors, 2=rooms, 3=apartment type, 4=initial residents
-// 5–8=amenities, 9–12=resident distribution
+    // 0=name, 1=floors, 2=rooms, 3=apartment type, 4=occupancy percent
+    // 5–8=amenities, 9–12=resident distribution
     private void createSetupErrorLabels() {
         for (int i = 0; i < 13; i++) {
             JLabel error = setupLabel(" ", 12, false);
@@ -220,11 +239,11 @@ public class SetupPanel extends JPanel {
         JPanel titleRow = new JPanel(new BorderLayout());
         titleRow.setOpaque(false);
         titleRow.add(setupLabel("Manual Setup", 24, true), BorderLayout.CENTER);
-        JPanel badge = new JPanel(new BorderLayout());
-        badge.putClientProperty("FlatLaf.style", "background: #f5f6f8; arc: 12");
-        badge.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        badge.add(setupLabel("Step 1 of 3", 12, false));
-        titleRow.add(badge, BorderLayout.EAST);
+//        JPanel badge = new JPanel(new BorderLayout());
+//        badge.putClientProperty("FlatLaf.style", "background: #f5f6f8; arc: 12");
+//        badge.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+//        badge.add(setupLabel("Step 1 of 3", 12, false));
+//        titleRow.add(badge, BorderLayout.EAST);
         header.add(titleRow, BorderLayout.NORTH);
         header.add(setupLabel("Enter every value below. Capacity depends on the building layout.", 14, false), BorderLayout.CENTER);
         return header;
@@ -323,7 +342,10 @@ public class SetupPanel extends JPanel {
         JPanel field = new JPanel(new BorderLayout(0, 6));
         field.setOpaque(false);
         field.add(heading, BorderLayout.NORTH);
-        field.add(input, BorderLayout.CENTER);
+        JPanel inputHolder = new JPanel(new BorderLayout());
+        inputHolder.setOpaque(false);
+        inputHolder.add(input, BorderLayout.NORTH);
+        field.add(inputHolder, BorderLayout.CENTER);
         field.add(errorLabels.get(errorIndex), BorderLayout.SOUTH);
         return field;
     }
@@ -377,6 +399,7 @@ public class SetupPanel extends JPanel {
         button.setFont(new Font("Segoe UI", primary ? Font.BOLD : Font.PLAIN, 14));
         button.setMargin(new Insets(10, 18, 10, 18));
         button.putClientProperty("JComponent.minimumHeight", 44);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.putClientProperty("FlatLaf.style", "arc: 16; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " + "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " + "borderColor: " + (primary ? "#315ff4" : "#dce0e5") + "; " + "focusedBorderColor: #000000; focusedBackground: " + fill + "; " + "hoverBackground: " + fill + "; pressedBackground: " + fill);
     }
 }

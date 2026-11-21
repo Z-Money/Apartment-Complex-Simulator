@@ -48,7 +48,7 @@ public class SimulationSettings {
         if (!name.isBlank() && name.length() <= referenceData.getMaximumNameLength()) {
             complexName = name;
         } else {
-            throw new InvalidConfigurationException("Invalid apartment complex name", "complexName");
+            throw new InvalidConfigurationException("Invalid apartment complex name", "Complex Name");
         }
     }
 
@@ -58,7 +58,7 @@ public class SimulationSettings {
         if (min <= floors && floors <= max) {
             numberOfFloors = floors;
         } else {
-            throw new InvalidConfigurationException("Invalid number of floors", "numberOfFloors");
+            throw new InvalidConfigurationException("Invalid number of floors", "Number of Floors");
         }
     }
 
@@ -68,7 +68,7 @@ public class SimulationSettings {
         if (min <= rooms && rooms <= max) {
             roomsPerFloor = rooms;
         } else {
-            throw new InvalidConfigurationException("Invalid number of rooms per floor", "roomsPerFloor");
+            throw new InvalidConfigurationException("Invalid number of rooms per floor", "Rooms per Floor");
         }
     }
 
@@ -76,7 +76,7 @@ public class SimulationSettings {
         if (type == 1 || type == 2) {
             apartmentType = type;
         } else {
-            throw new InvalidConfigurationException("Invalid apartment type", "apartmentType");
+            throw new InvalidConfigurationException("Invalid apartment type", "Apartment Type");
         }
     }
 
@@ -84,7 +84,7 @@ public class SimulationSettings {
         if (initialOccupancyPercentage >= 0 && initialOccupancyPercentage <= 100) {
             this.initialOccupancyPercentage = initialOccupancyPercentage;
         } else {
-            throw new InvalidConfigurationException("Invalid initial resident count", "initialOccupancyPercentage");
+            throw new InvalidConfigurationException("Invalid initial occupancy percent", "Initial Occupancy Percent");
         }
     }
 
@@ -92,7 +92,7 @@ public class SimulationSettings {
         if (count >= 1) {
             initialResidentCount = count;
         } else {
-            throw new InvalidConfigurationException("Invalid initial resident count", "initialResidentCount");
+            throw new InvalidConfigurationException("Invalid initial resident count", "Initial Resident Count");
         }
     }
 
@@ -110,24 +110,32 @@ public class SimulationSettings {
         }
     }
 
-    public void setResidentDistributions(int[] percentages) throws InvalidConfigurationException {
+    public void setResidentDistributions(String[] values, ArrayList<InvalidConfigurationException> errors) throws InvalidConfigurationException {
         int total = 0;
-        for (int num : percentages) {
-            if (num >= 0 && num <= 100) {
-                total += num;
-            } else {
-                throw new InvalidConfigurationException("Invalid resident distribution", "residentDistribution");
+        int[] percentages = new int[4];
+        String[] distributionNames = {"No-Maintenance", "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
+        int previousErrors = errors.size();
+        for (int i = 0; i < 4; i++) {
+            try {
+                percentages[i] = Integer.parseInt(values[i + 1].trim());
+                if (percentages[i] < 0 || percentages[i] > 100) {
+                    throw new NumberFormatException();
+                }
+                total += percentages[i];
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errors.add(new InvalidConfigurationException("Empty or invalid value", distributionNames[i]));
             }
         }
-        if (total != 100) throw new InvalidConfigurationException("Invalid resident distribution", "residentDistribution");
+        if (errors.size() > previousErrors) return;
+        if (total != 100) throw new InvalidConfigurationException("Resident distributions must total 100%", "Resident Distribution");
         residentDistributions = percentages;
     }
 
-    public ArrayList<String> applyImportedValues(String[] values) {
-        ArrayList<String> invalidValues = new ArrayList<>();
+    public ArrayList<InvalidConfigurationException> applyImportedValues(String[] values) {
+        ArrayList<InvalidConfigurationException> errors = new ArrayList<>();
         for (int i = 0; i < values.length; i++) {
+            String[] line = values[i].trim().split(",", -1);
             try {
-                String[] line = values[i].trim().split(",");
                 switch (line[0]) {
                     case "Complex Name" -> setComplexName(line[1]);
                     case "Number of Floors" -> setNumberOfFloors(Integer.parseInt(line[1]));
@@ -138,16 +146,18 @@ public class SimulationSettings {
                     case "Apartment Layout" -> setBuildingLayout(line[1]);
                     case "Amenity" -> setAmenityStatus(line[1], line[2]);
                     case "Resident Distribution" ->
-                            setResidentDistributions(new int[]{Integer.parseInt(line[1]), Integer.parseInt(line[2]), Integer.parseInt(line[3]), Integer.parseInt(line[4])});
-                    default -> throw new InvalidConfigurationException("Invalid setting on row " + i, "settingsFile");
+                            setResidentDistributions(line, errors);
+                    default -> throw new InvalidConfigurationException("Unknown setting:" + line[1], line[0]);
                 }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                errors.add(new InvalidConfigurationException("Empty value for " + line[0].toLowerCase(), line[0]));
             } catch (NumberFormatException e) {
-                continue;
+                errors.add(new InvalidConfigurationException("Invalid integer value: " + line[1], line[0]));
             } catch (InvalidConfigurationException e) {
-                invalidValues.add(values[i]);
+                errors.add(e);
             }
         }
-        return invalidValues;
+        return errors;
     }
 
     public String getComplexName() {
