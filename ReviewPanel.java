@@ -73,6 +73,7 @@ public class ReviewPanel extends JPanel {
 
     private void setActions() {
         editButton.addActionListener(e -> controller.handleReviewEdit());
+        startButton.addActionListener(e -> controller.handleStartSimulation());
     }
 
     private void createReviewComponents() {

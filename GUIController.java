@@ -120,6 +120,12 @@ public class GUIController {
 
     public void handleStartSimulation() {
         // TODO: Start simulation after config is shown
+        try {
+            app.beginSimulation();
+        } catch (CapacityExceededException | InvalidConfigurationException e) {
+            // TODO: Show dialog box reporting error and to restart the program
+        }
+        app.runSimulation(); // AURA
     }
 
     public void handleMonthCompleted(MonthlyRecord record, int totalMonths) {

@@ -118,7 +118,6 @@ public class ApartmentSimulator {
     }
 
     public void beginSimulation() throws CapacityExceededException, InvalidConfigurationException {
-        buildComplex();
         simState = new SimulationState();
         simResults = new SimulationResults(complex.getComplexName());
         int initialResidentCount;
