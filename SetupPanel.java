@@ -91,31 +91,26 @@ public class SetupPanel extends JPanel {
 
     public String[] getFormValues() {
         ArrayList<String> formValues = new ArrayList<>();
-        try {
-            formValues.add(String.format("Complex Name,%s", complexNameField.getText()));
-            formValues.add(String.format("Number of Floors,%s", floorsField.getText()));
-            formValues.add(String.format("Rooms per Floor,%s", roomsPerFloorField.getText()));
-            String apartmentType = apartmentTypeBox.getSelectedIndex() == 0 ? "1" : "2";
-            formValues.add(String.format("Apartment Type,%s", apartmentType));
-            formValues.add(String.format("Occupancy Percentage,%s", initialOccupancyField.getText()));
-            String[] amenityNames = new String[]{"Laundry Machines", "Pool", "Gym", "Security"};
-            for (int i = 0; i < 4; i++) {
-                if (amenityChecks.get(i).isSelected()) {
-                    String amenityName = amenityNames[i];
-                    String amenityStatus = String.valueOf(amenityStatusBoxes.get(i).getSelectedItem());
-                    amenityStatus = String.join("_", amenityStatus.toUpperCase().split(" "));
-                    formValues.add(String.format("Amenity,%s,%s", amenityName, amenityStatus));
-                }
+        formValues.add(String.format("Complex Name,%s", complexNameField.getText()));
+        formValues.add(String.format("Number of Floors,%s", floorsField.getText()));
+        formValues.add(String.format("Rooms per Floor,%s", roomsPerFloorField.getText()));
+        String apartmentType = apartmentTypeBox.getSelectedIndex() == 0 ? "1" : "2";
+        formValues.add(String.format("Apartment Type,%s", apartmentType));
+        formValues.add(String.format("Occupancy Percentage,%s", initialOccupancyField.getText()));
+        String[] amenityNames = new String[]{"Laundry Machines", "Pool", "Gym", "Security"};
+        for (int i = 0; i < 4; i++) {
+            if (amenityChecks.get(i).isSelected()) {
+                String amenityName = amenityNames[i];
+                String amenityStatus = String.valueOf(amenityStatusBoxes.get(i).getSelectedItem());
+                amenityStatus = String.join("_", amenityStatus.toUpperCase().split(" "));
+                formValues.add(String.format("Amenity,%s,%s", amenityName, amenityStatus));
             }
-            StringBuilder distributionStr = new StringBuilder("Resident Distribution");
-            for (JTextField distributionPercentage : distributionFields)
-                distributionStr.append(String.format(",%s", distributionPercentage.getText()));
-            formValues.add(distributionStr.toString());
-            return formValues.toArray(new String[0]);
-        } catch (NullPointerException e) {
-            // TODO: Do smth prob
         }
-        return null;
+        StringBuilder distributionStr = new StringBuilder("Resident Distribution");
+        for (JTextField distributionPercentage : distributionFields)
+            distributionStr.append(String.format(",%s", distributionPercentage.getText()));
+        formValues.add(distributionStr.toString());
+        return formValues.toArray(new String[0]);
     }
 
     public void setFormValues(String[] values) {
@@ -126,15 +121,15 @@ public class SetupPanel extends JPanel {
         initialOccupancyField.setText(values[4]);
         for (int i = 0; i < amenityStatusBoxes.size(); i++) {
             ArrayList<String> options = new ArrayList<>();
-            amenityChecks.get(i).setSelected(Boolean.parseBoolean(values[5+2*i]));
+            amenityChecks.get(i).setSelected(Boolean.parseBoolean(values[5 + 2 * i]));
             for (int j = 0; j < amenityStatusBoxes.get(i).getItemCount(); j++) {
                 options.add(amenityStatusBoxes.get(i).getItemAt(j));
             }
-            int optionIndex = options.indexOf(values[6+2*i]);
+            int optionIndex = options.indexOf(values[6 + 2 * i]);
             amenityStatusBoxes.get(i).setSelectedIndex(optionIndex != -1 ? optionIndex : 0);
         }
         for (int i = 0; i < distributionFields.size(); i++) {
-            distributionFields.get(i).setText(values[13+i]);
+            distributionFields.get(i).setText(values[13 + i]);
         }
     }
 
@@ -404,11 +399,11 @@ public class SetupPanel extends JPanel {
         button.putClientProperty("FlatLaf.style", "arc: 16; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " + "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " + "borderColor: " + (primary ? "#315ff4" : "#dce0e5") + "; " + "focusedBorderColor: #000000; focusedBackground: " + fill + "; " + "hoverBackground: " + fill + "; pressedBackground: " + fill);
     }
 
-    public void setRetrievedSettings(String[] settings) {
-        retrievedSettings = settings;
-    }
-
     public String[] getRetrievedSettings() {
         return retrievedSettings;
+    }
+
+    public void setRetrievedSettings(String[] settings) {
+        retrievedSettings = settings;
     }
 }

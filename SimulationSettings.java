@@ -24,7 +24,7 @@ public class SimulationSettings {
         buildingLayout = "";
         amenityNames = new ArrayList<>();
         amenityStatuses = new ArrayList<>();
-        residentDistributions = new int[4];
+        residentDistributions = new int[]{-1, -1, -1, -1};
     }
 
     public void loadDefaults() {
@@ -138,6 +138,7 @@ public class SimulationSettings {
         for (int i = 0; i < values.length; i++) {
             String[] line = values[i].trim().split(",", -1);
             try {
+                System.out.println(values[i]);
                 switch (line[0]) {
                     case "Complex Name" -> setComplexName(line[1]);
                     case "Number of Floors" -> setNumberOfFloors(Integer.parseInt(line[1]));
@@ -149,7 +150,7 @@ public class SimulationSettings {
                     case "Amenity" -> setAmenityStatus(line[1], line[2]);
                     case "Resident Distribution" ->
                             setResidentDistributions(line, errors);
-                    default -> throw new InvalidConfigurationException("Unknown setting:" + line[1], line[0]);
+                    default -> throw new InvalidConfigurationException("Unknown setting in file: " + line[0], line[0]);
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 errors.add(new InvalidConfigurationException("Empty value for " + line[0].toLowerCase(), line[0]));
@@ -158,6 +159,24 @@ public class SimulationSettings {
             } catch (InvalidConfigurationException e) {
                 errors.add(e);
             }
+        }
+        return errors;
+    }
+
+    public ArrayList<InvalidConfigurationException> checkMissingValues(String[] values) {
+        ArrayList<InvalidConfigurationException> errors = new ArrayList<>();
+        ArrayList<String> strValues = new ArrayList<>();
+        strValues.add(String.valueOf(complexName));
+        strValues.add(String.valueOf(numberOfFloors));
+        strValues.add(String.valueOf(roomsPerFloor));
+        strValues.add(String.valueOf(apartmentType));
+        strValues.add(String.valueOf(initialOccupancyPercentage));
+        strValues.add(String.valueOf(initialResidentCount));
+        strValues.add(String.valueOf(buildingLayout));
+        for (int i : residentDistributions) strValues.add(String.valueOf(i));
+        String[] settingNames = {"Complex Name", "Number of Floors", "Rooms per Floor", "Apartment Type", "Initial Occupancy Percentage", "Initial Number of Residents", "Building Layout", "No-Maintenance", "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
+        for (int i = 0; i < strValues.size(); i++) {
+            if (strValues.get(i).equals("null") || strValues.get(i).equals("-1")) errors.add(new InvalidConfigurationException("Missing value: " + settingNames[i], settingNames[i]));
         }
         return errors;
     }

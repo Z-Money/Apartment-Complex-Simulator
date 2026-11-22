@@ -1,5 +1,4 @@
 import com.formdev.flatlaf.FlatLightLaf;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -89,17 +88,15 @@ public class ApartmentSimulator {
         String[] simValues = simSettings.toDisplayText();
         simValues[10] = String.valueOf(complex.getApartments().size());
         int capacity = 0;
-        for (Apartment apartment : complex.getApartments()) capacity += apartment.getCapacity();
+        for (Apartment apartment : complex.getApartments()) {
+            capacity += apartment.getCapacity();
+        }
         simValues[11] = String.valueOf(capacity);
         return simValues;
     }
 
-    public String[] importSetup(String fileName) {
-        try {
-            return database.readSettingsFile(fileName);
-        } catch (InvalidConfigurationException e) {
-            throw new RuntimeException(e);
-        }
+    public String[] importSetup(String fileName) throws InvalidConfigurationException {
+        return database.readSettingsFile(fileName);
     }
 
     public int calculateResidentCapacity() {
@@ -114,6 +111,14 @@ public class ApartmentSimulator {
         SimulationSettings candidate = new SimulationSettings(referenceData);
         ArrayList<InvalidConfigurationException> invalidSettings = candidate.applyImportedValues(setupLines);
         if (invalidSettings.isEmpty()) simSettings = candidate;
+        return invalidSettings;
+    }
+
+    public ArrayList<InvalidConfigurationException> applyImportSetup(String[] setupLines) {
+        SimulationSettings candidate = new SimulationSettings(referenceData);
+        ArrayList<InvalidConfigurationException> invalidSettings = candidate.applyImportedValues(setupLines);
+        for (InvalidConfigurationException e : candidate.checkMissingValues(setupLines)) invalidSettings.add(e);
+        simSettings = candidate;
         return invalidSettings;
     }
 

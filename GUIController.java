@@ -19,10 +19,12 @@ public class GUIController {
 
         startPanel = new StartPanel(this);
         setupPanel = new SetupPanel(this);
+        importPanel = new ImportPanel(this);
         reviewPanel = new ReviewPanel(this);
 
         mainWindow.addScreen("startPanel", startPanel);
         mainWindow.addScreen("setupPanel", setupPanel);
+        mainWindow.addScreen("importPanel", importPanel);
         mainWindow.addScreen("reviewPanel", reviewPanel);
     }
 
@@ -53,20 +55,20 @@ public class GUIController {
         // TODO: Read form values, build settings, report validation error via dialog box
         String[] formValues = setupPanel.getFormValues();
 //        try {
-            ArrayList<InvalidConfigurationException> errors = app.applySetup(formValues);
-            if (!errors.isEmpty()) {
-                setupPanel.clearFieldErrors();
-                for (InvalidConfigurationException error : errors) {
-                    setupPanel.showFieldErrors(error.getSettingName(), error.getMessage());
-                }
-            } else {
-                if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(formValues, setupPanel.getRetrievedSettings())) {
-                    app.buildComplex();
-                    setupPanel.setRetrievedSettings(formValues);
-                }
-                reviewPanel.displayConfiguration(app.getReviewText());
-                mainWindow.showScreen("reviewPanel");
+        ArrayList<InvalidConfigurationException> errors = app.applySetup(formValues);
+        if (!errors.isEmpty()) {
+            setupPanel.clearFieldErrors();
+            for (InvalidConfigurationException error : errors) {
+                setupPanel.showFieldErrors(error.getSettingName(), error.getMessage());
             }
+        } else {
+            if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(formValues, setupPanel.getRetrievedSettings())) {
+                app.buildComplex();
+                setupPanel.setRetrievedSettings(formValues);
+            }
+            reviewPanel.displayConfiguration(app.getReviewText());
+            mainWindow.showScreen("reviewPanel");
+        }
 //            app.beginSimulation();
 //            app.runSimulation();
 //            String resultsFileName = app.formatFileName("results");
@@ -98,11 +100,49 @@ public class GUIController {
     }
 
     public void handleImportFileChosen(String fileName) {
+        try {
+            String[] readValues = app.importSetup(fileName);
+            ArrayList<InvalidConfigurationException> errors = app.applyImportSetup(readValues);
+            ArrayList<String> errorStrList = new ArrayList<>();
+            for (InvalidConfigurationException e : errors) errorStrList.add(e.getMessage());
+            if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(app.getReviewText(), setupPanel.getRetrievedSettings())) {
+                app.buildComplex();
+                setupPanel.setRetrievedSettings(app.getReviewText());
+            }
+            importPanel.showPreview(app.getReviewText());
+            importPanel.showValidationStatus(errorStrList);
+            //else {
+            // Code to show review panel
+                /*if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(app.getReviewText(), setupPanel.getRetrievedSettings())) {
+                    app.buildComplex();
+                    setupPanel.setRetrievedSettings(app.getReviewText());
+                }
+                reviewPanel.displayConfiguration(app.getReviewText());
+                mainWindow.showScreen("reviewPanel");*/
 
+            //}
+        } catch (InvalidConfigurationException e) {
+            ArrayList<String> error = new ArrayList<>();
+            error.add(e.getMessage());
+            importPanel.showValidationStatus(error);
+        }
     }
 
     public void handleUseImportedConfiguration() {
-
+        String[] formValues = importPanel.getImportFormValues();
+        ArrayList<InvalidConfigurationException> errors = app.applySetup(formValues);
+        ArrayList<String> errorStrList = new ArrayList<>();
+        for (InvalidConfigurationException e : errors) errorStrList.add(e.getMessage());
+        if (!errors.isEmpty()) {
+            importPanel.showValidationStatus(errorStrList);
+        } else {
+            if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(formValues, setupPanel.getRetrievedSettings())) {
+                app.buildComplex();
+                setupPanel.setRetrievedSettings(formValues);
+            }
+            reviewPanel.displayConfiguration(app.getReviewText());
+            mainWindow.showScreen("reviewPanel");
+        }
     }
 
     public String promptInvalidSetting(String settingName) {

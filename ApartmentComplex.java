@@ -60,6 +60,7 @@ public class ApartmentComplex {
                     apartment = new DoubleApartment(i, j);
                 }
                 apartments.add(apartment);
+                arrayIndex++;
             }
         }
     }
