@@ -17,7 +17,7 @@ public class LaundryMachines extends Amenity {
 
     @Override
     public String selectDegradedStatus(Random random) {
-        return possibleStatuses[1 + random.nextInt(0, possibleStatuses.length) - 1];
+        return possibleStatuses[random.nextInt(1, possibleStatuses.length)];
     }
 
     @Override
