@@ -21,9 +21,10 @@ public class ApartmentSimulator {
         database = new ApartmentComplexDatabase();
         random = new Random();
         try {
-            referenceData = database.readReferenceData("test.csv"); // Temp hardcode until GUI passes file path
+            referenceData = database.readReferenceData("referenceData.csv"); // Temp hardcode until GUI passes file path
         } catch (InvalidConfigurationException e) {
-            throw new RuntimeException(e);
+            guiController.showError("Reference Data Error", String.format("Critical error. %s Program will now end.", e.getMessage()));
+            guiController.handleExit();
         }
         simSettings = new SimulationSettings(referenceData);
         residentGenerator = new ResidentGenerator(referenceData.getResidentTypes());
@@ -143,8 +144,12 @@ public class ApartmentSimulator {
         boolean settingsSuccess = false, resultsSuccess = false;
         try {
             settingsSuccess = database.writeSettingsFile(settingsFileName, simSettings);
-            resultsSuccess = database.writeResultsFile(resultsFileName, simSettings, simResults);
             if (!settingsSuccess) throw new IOException("Error writing settings file");
+        } catch (IOException e) {
+            guiController.showError("File Writing Error", e.getMessage());
+        }
+        try {
+            resultsSuccess = database.writeResultsFile(resultsFileName, simSettings, simResults);
             if (!resultsSuccess) throw new IOException("Error writing  results file");
         } catch (IOException e) {
             guiController.showError("File Writing Error", e.getMessage());
@@ -158,7 +163,6 @@ public class ApartmentSimulator {
         int rooms = simSettings.getRoomsPerFloor();
         complex = new ApartmentComplex(complexName, floors, rooms);
         int apartmentType = simSettings.getApartmentType();
-        // FIXME: ISSUE
         if (simSettings.getBuildingLayout().isEmpty() || !guiController.getSelectedSetupMode().equals("import")) {
             complex.buildLayout(apartmentType, random);
             simSettings.setBuildingLayout(complex.getLayoutList());
@@ -170,13 +174,13 @@ public class ApartmentSimulator {
                 Amenity amenity = referenceData.createAmenity(amenityNames[i], amenityStatuses[i]);
                 complex.addAmenity(amenity);
             } catch (InvalidConfigurationException e) {
-                throw new RuntimeException(e); // TODO: Prob should do smth about this once GUI exist
+                guiController.showError("Complex Construction Error", e.getMessage());
+                guiController.returnToStart();
             }
         }
     }
 
     private void runMonth() {
-        // TODO: Increase simState by 1 month, run monthly calculations and store in simResults
         evaluateAmenities();
         double qualityScore = calculateQualityScore();
         double operatingCost = calculateOperatingCost();
@@ -188,7 +192,8 @@ public class ApartmentSimulator {
         try {
             processMoveIns(qualityScore, rent);
         } catch (CapacityExceededException e) {
-            // TODO: Smth smth GUI
+            guiController.showError("Capacity Error", e.getMessage());
+            guiController.handleExit();
         }
         double utilityUsage = 0.0;
         for (Resident resident : complex.getAllResidents())

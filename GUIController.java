@@ -14,7 +14,6 @@ public class GUIController {
     private String selectedSetupMode;
 
     public GUIController(ApartmentSimulator app) {
-        // TODO: Init window and three panels
         this.app = app;
         mainWindow = new MainWindow("Apartment Complex Simulator");
 
@@ -42,12 +41,7 @@ public class GUIController {
         mainWindow.showScreen("startPanel");
     }
 
-    public void showSetupScreen() {
-        // TODO: Display setup screen
-    }
-
     public void handleSetupModeSelected(String mode) {
-        // TODO: Record setup mode and enable/disable manual entry
         selectedSetupMode = mode;
         switch (mode) {
             case "default" -> handleUseDefaults();
@@ -57,9 +51,7 @@ public class GUIController {
     }
 
     public void handleManualSetupSubmitted() {
-        // TODO: Read form values, build settings, report validation error via dialog box
         String[] formValues = setupPanel.getFormValues();
-//        try {
         ArrayList<InvalidConfigurationException> errors = app.applySetup(formValues);
         if (!errors.isEmpty()) {
             setupPanel.clearFieldErrors();
@@ -74,14 +66,6 @@ public class GUIController {
             reviewPanel.displayConfiguration(app.getReviewText());
             mainWindow.showScreen("reviewPanel");
         }
-//            app.beginSimulation();
-//            app.runSimulation();
-//            String resultsFileName = app.formatFileName("results");
-//            String settingsFileName = app.formatFileName("settings");
-//            app.finishSimulation(resultsFileName, settingsFileName);
-//        } catch (InvalidConfigurationException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     public void loadDefaultSetupValues() {
@@ -144,11 +128,6 @@ public class GUIController {
             reviewPanel.displayConfiguration(app.getReviewText());
             mainWindow.showScreen("reviewPanel");
         }
-    }
-
-    public String promptInvalidSetting(String settingName) {
-        // TODO: Get custom value or default value for invalid setting and return choice
-        return "";
     }
 
     public void handleReviewEdit() {

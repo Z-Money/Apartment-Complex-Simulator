@@ -67,11 +67,6 @@ public class SimulationResults {
         return lowestResidents;
     }
 
-    public String toDisplayText() {
-        // TODO: Format once I figure GUI out
-        return "";
-    }
-
     public ArrayList<String> toCsvLines() {
         ArrayList<String> csvLines = new ArrayList<>();
         csvLines.add(String.format("Occupied Single Apartments,%d%n", occupiedSingles));

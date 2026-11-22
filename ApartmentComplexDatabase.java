@@ -16,7 +16,7 @@ public class ApartmentComplexDatabase {
         }
     }
 
-    public ReferenceData handleLines(Scanner scan) throws InvalidConfigurationException {
+    public ReferenceData handleLines(Scanner scan) throws InvalidConfigurationException { // Interprets reference data file lines
         int row = 0, amenityIndex = 0, utilityIndex = 0;
         ReferenceData referenceData = new ReferenceData();
         try {
@@ -28,11 +28,10 @@ public class ApartmentComplexDatabase {
                 if (line[0].equals("Amenity")) amenityIndex++;
             }
             if (utilityIndex != 2 || amenityIndex != 4 || referenceData.getResidentTypes().size() != 4)
-                throw new InvalidConfigurationException("Reference data is missing required utility, amenity, or resident type lines", "referenceDataFile");
+                throw new InvalidConfigurationException("Reference data is missing required utility, amenity, or resident type lines.", "referenceDataFile");
             return referenceData;
         } catch (NumberFormatException e) {
-            throw new InvalidConfigurationException("Invalid setting on row " + row + " in reference data file", "referenceDataFile");
-            // TODO: Link to GUI at some point soon
+            throw new InvalidConfigurationException("Invalid setting on row " + row + " in reference data file.", "referenceDataFile");
         }
     }
 
@@ -60,7 +59,7 @@ public class ApartmentComplexDatabase {
             printer.close();
             wroteFileSuccessfully = true;
         } catch (NullPointerException | FileNotFoundException e) {
-            wroteFileSuccessfully = false; // TODO: Dialog box with GUI indicating error saving settings
+            wroteFileSuccessfully = false;
         }
         return wroteFileSuccessfully;
     }
