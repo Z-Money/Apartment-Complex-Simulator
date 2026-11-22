@@ -273,4 +273,8 @@ public class ApartmentSimulator {
         }
         return newFileName + ".csv";
     }
+
+    public String getComplexName() {
+        return complex.getComplexName();
+    }
 }

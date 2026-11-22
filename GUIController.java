@@ -21,11 +21,13 @@ public class GUIController {
         setupPanel = new SetupPanel(this);
         importPanel = new ImportPanel(this);
         reviewPanel = new ReviewPanel(this);
+        simulationPanel = new SimulationPanel(this);
 
         mainWindow.addScreen("startPanel", startPanel);
         mainWindow.addScreen("setupPanel", setupPanel);
         mainWindow.addScreen("importPanel", importPanel);
         mainWindow.addScreen("reviewPanel", reviewPanel);
+        mainWindow.addScreen("simulationPanel", simulationPanel);
     }
 
     public void startGUI() {
@@ -95,10 +97,6 @@ public class GUIController {
         mainWindow.showScreen("reviewPanel");
     }
 
-    public void handleChooseImportFile() {
-
-    }
-
     public void handleImportFileChosen(String fileName) {
         try {
             String[] readValues = app.importSetup(fileName);
@@ -160,12 +158,14 @@ public class GUIController {
 
     public void handleStartSimulation() {
         // TODO: Start simulation after config is shown
-        try {
-            app.beginSimulation();
-        } catch (CapacityExceededException | InvalidConfigurationException e) {
+        //try {
+            simulationPanel.fillApartmentName(app.getComplexName());
+            mainWindow.showScreen("simulationPanel");
+            //app.beginSimulation();
+        //} catch (CapacityExceededException | InvalidConfigurationException e) {
             // TODO: Show dialog box reporting error and to restart the program
-        }
-        app.runSimulation(); // AURA
+        //}
+        //app.runSimulation(); // AURA
     }
 
     public void handleMonthCompleted(MonthlyRecord record, int totalMonths) {
