@@ -440,7 +440,6 @@ public class ImportPanel extends JPanel {
                 String amenityName = amenityNames[i];
                 String amenityStatus = String.valueOf(amenityStatusBoxes.get(i).getSelectedItem());
                 amenityStatus = String.join("_", amenityStatus.toUpperCase().split(" "));
-                System.out.printf("Amenity,%s,%s", amenityName, amenityStatus);
                 formValues.add(String.format("Amenity,%s,%s", amenityName, amenityStatus));
             }
         }

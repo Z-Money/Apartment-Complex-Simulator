@@ -138,7 +138,6 @@ public class SimulationSettings {
         for (int i = 0; i < values.length; i++) {
             String[] line = values[i].trim().split(",", -1);
             try {
-                System.out.println(values[i]);
                 switch (line[0]) {
                     case "Complex Name" -> setComplexName(line[1]);
                     case "Number of Floors" -> setNumberOfFloors(Integer.parseInt(line[1]));
