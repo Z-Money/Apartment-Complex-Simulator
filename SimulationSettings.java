@@ -47,11 +47,11 @@ public class SimulationSettings {
     }
 
     public void setComplexName(String name) throws InvalidConfigurationException {
-        if (!name.isBlank() && name.length() <= referenceData.getMaximumNameLength()) {
-            complexName = name;
-        } else {
-            throw new InvalidConfigurationException("Invalid apartment complex name", "Complex Name");
-        }
+        String regex = "[a-zA-Z0-9 -]+";
+        if (name.isBlank()) throw new InvalidConfigurationException("Apartment name cannot be empty.", "Complex Name");
+        else if (name.length() > referenceData.getMaximumNameLength()) throw new InvalidConfigurationException("Apartment name is too long.", "Complex Name");
+        else if (!name.matches(regex)) throw new InvalidConfigurationException("Apartment name may only have a-z, spaces, and hyphens.", "Complex Name");
+        complexName = name;
     }
 
     public void setNumberOfFloors(int floors) throws InvalidConfigurationException {
