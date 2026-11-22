@@ -395,22 +395,56 @@ public class SimulationPanel extends JPanel {
     }
 
     public void updateProgress(int monthNumber, int totalMonths) {
-
+        progressBar.setValue(monthNumber);
+        progressPercentLabel.setText(String.format("%.0f%%", ((double) monthNumber / 12) * 100));
+        monthLabel.setText(String.format("Month %d of 12", monthNumber));
     }
 
     public void updateMetrics(int residents, int capacity, double rent, double aas) {
-
+        residentsMetricLabel.setText(String.format("%d / %d", residents, capacity));
+        occupancyMetricLabel.setText(String.format("%.0f%%", ((double) residents / capacity) * 100));
+        rentMetricLabel.setText(String.format("$%.2f", rent));
+        aasMetricLabel.setText(String.format("%.2f", aas));
     }
 
     public void updateAmenityStatuses(String[] names, String[] statuses) {
-
+        // Iterate over all amenities
+        // switch case for status, change color and status accordingly
+        Color statusColor = new Color(0x000000);
+        for (int i = 0; i < names.length; i++) {
+            switch (statuses[i]) {
+                case "FULL_OPERATION" -> statusColor = new Color(0x198754);
+                case "HALF_OPERATION", "REDUCED_MACHINES", "REDUCED_FORCE" -> statusColor = new Color(0xe79a1b);
+                case "CLOSED", "NOT_FUNCTIONING" -> statusColor = new Color(0xd43b45);
+            }
+            int index = -1;
+            switch (names[i]) {
+                case "Laundry Machines" -> index = 0;
+                case "Pool" -> index = 1;
+                case "Gym" -> index = 2;
+                case "Security" -> index = 3;
+            }
+            String[] amenityStatusArr = statuses[i].toLowerCase().split("_");
+            for (int j = 0; j < amenityStatusArr.length; j++) amenityStatusArr[j] = amenityStatusArr[j].substring(0, 1).toUpperCase() + amenityStatusArr[j].substring(1);
+            String amenityStatus = String.join(" ", amenityStatusArr);
+            amenityIndicatorLabels.get(index).setForeground(statusColor);
+            amenityStatusLabels.get(index).setText(amenityStatus);
+        }
     }
 
     public void updateMonthlySummary(double aqs, double operatingCost, int movedOut) {
-
+        aqsLabel.setText(String.format("%.2f", aqs));
+        operatingCostLabel.setText(String.format("$%,.2f", operatingCost));
+        movedOutLabel.setText(String.valueOf(movedOut));
     }
 
-    public void addMonthRow(MonthlyRecord record, String[] utilityNames) {
-
+    public void addMonthRow(MonthlyRecord record) {
+        int monthNum = record.getMonthNumber();
+        String aas = String.format("%.2f", record.getAverageSatisfaction());
+        int residents = record.getTotalResidents();
+        int occupied = record.getOccupiedSingles() + record.getOccupiedDoubles();
+        int movedOut = record.getResidentsMovedOut();
+        String utilityUsage = String.format("%.0f kWh", record.getUtilityUsage());
+        monthlyTableModel.addRow(new Object[]{monthNum, aas, residents, occupied, movedOut, utilityUsage});
     }
 }

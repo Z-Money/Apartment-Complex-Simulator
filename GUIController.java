@@ -158,18 +158,23 @@ public class GUIController {
 
     public void handleStartSimulation() {
         // TODO: Start simulation after config is shown
-        //try {
+        try {
             simulationPanel.fillApartmentName(app.getComplexName());
             mainWindow.showScreen("simulationPanel");
-            //app.beginSimulation();
-        //} catch (CapacityExceededException | InvalidConfigurationException e) {
+            app.beginSimulation();
+        } catch (CapacityExceededException | InvalidConfigurationException e) {
             // TODO: Show dialog box reporting error and to restart the program
-        //}
-        //app.runSimulation(); // AURA
+            System.out.println("I dont feel too good mr stark");
+        }
+        app.runSimulation(); // AURA
     }
 
-    public void handleMonthCompleted(MonthlyRecord record, int totalMonths) {
-
+    public void handleMonthCompleted(MonthlyRecord record, int totalMonths, String[][] amenityInfo, int capacity, double rent, double operatingCost) {
+        simulationPanel.updateProgress(record.getMonthNumber(), totalMonths);
+        simulationPanel.updateMetrics(record.getTotalResidents(), capacity, rent, record.getAverageSatisfaction());
+        simulationPanel.updateAmenityStatuses(amenityInfo[0], amenityInfo[1]);
+        simulationPanel.updateMonthlySummary(record.getAverageSatisfaction(), operatingCost, record.getResidentsMovedOut());
+        simulationPanel.addMonthRow(record);
     }
 
     public void handleSimulationComplete(SimulationResults results) {

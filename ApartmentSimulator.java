@@ -1,4 +1,5 @@
 import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -25,51 +26,23 @@ public class ApartmentSimulator {
         }
         simSettings = new SimulationSettings(referenceData);
         residentGenerator = new ResidentGenerator(referenceData.getResidentTypes());
-//        guiController = new GUIController();
     }
 
     public static void main(String[] args) {
-        System.setProperty("flatlaf.useNativeLibrary", "false");
-        FlatLightLaf.setup();
-        SwingUtilities.invokeLater(() -> {
-            ApartmentSimulator sim = new ApartmentSimulator();
-            sim.runSimulator();
-        });
-//        System.setProperty("flatlaf.useNativeLibrary", "false");
-//        FlatLightLaf.setup();
-//
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame frame = new JFrame("FlatLaf Styling");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setSize(400, 300);
-//
-//            // 1. Set the layout manager to FlowLayout
-//            frame.setLayout(new FlowLayout());
-//
-//            JButton button = new JButton("Click Me!");
-//            // 2. Use setPreferredSize instead of setSize
-//            button.setPreferredSize(new Dimension(150, 50));
-//            frame.add(button);
-//
-//            frame.setLocationRelativeTo(null);
-//            frame.setVisible(true);
-//        });
-
-//            ReferenceData refData = db.readReferenceData("test.csv");
-//            SimulationSettings simSettings = new SimulationSettings(refData);
-//            ArrayList<String> invalidValues = simSettings.applyImportedValues(db.readSettingsFile("settings.csv"));
-        //OLD CODE HERE
-//        String[] stuff = sim.importSetup("settings.csv");
-//        try {
-//            sim.applySetup(stuff);
-//            sim.beginSimulation();
-//            sim.runSimulation();
-//            String resultsFileName = sim.formatFileName("results");
-//            String settingsFileName = sim.formatFileName("settings");
-//            sim.finishSimulation(resultsFileName, settingsFileName);
-//        } catch (InvalidConfigurationException | CapacityExceededException e) {
-//            throw new RuntimeException(e); // TODO: Connect to GUI
-//        }
+        try {
+            System.setProperty("flatlaf.useNativeLibrary", "false");
+            FlatLightLaf.setup();
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    ApartmentSimulator sim = new ApartmentSimulator();
+                    sim.runSimulator();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "The simulation failed to initialize:\n" + e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "The simulation failed to initialize:\n" + e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void runSimulator() {
@@ -129,17 +102,25 @@ public class ApartmentSimulator {
         if (simSettings.getInitialResidentCount() == -1) {
             initialResidentCount = simSettings.calculateResidentCount(simSettings.getInitialOccupancyPercentage(), calculateResidentCapacity());
             simSettings.setInitialResidentCount(initialResidentCount);
-        }
-        else initialResidentCount = simSettings.getInitialResidentCount();
+        } else initialResidentCount = simSettings.getInitialResidentCount();
         ArrayList<Resident> initialResidents = residentGenerator.generateInitialResidents(initialResidentCount, simSettings.getResidentDistributions());
         for (Resident resident : initialResidents) complex.placeResident(resident, random);
     }
 
     public void runSimulation() {
-        for (int i = 0; i < 12; i++) {
-            runMonth();
-            simState.advanceMonth();
-        }
+        Thread simulationThread = new Thread(() -> {
+            for (int i = 0; i < 12; i++) {
+                try {
+                    sleep(4000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                runMonth();
+                simState.advanceMonth();
+            }
+        });
+
+        simulationThread.start();
     }
 
     public void finishSimulation(String resultsFileName, String settingsFileName) {
@@ -158,8 +139,7 @@ public class ApartmentSimulator {
         if (simSettings.getBuildingLayout().isEmpty() || !guiController.getSelectedSetupMode().equals("import")) {
             complex.buildLayout(apartmentType, random);
             simSettings.setBuildingLayout(complex.getLayoutList());
-        }
-        else complex.setLayout(simSettings.getBuildingLayout());
+        } else complex.setLayout(simSettings.getBuildingLayout());
         String[] amenityNames = simSettings.getAmenityNames().toArray(new String[0]);
         String[] amenityStatuses = simSettings.getAmenityStatuses().toArray(new String[0]);
         for (int i = 0; i < amenityNames.length; i++) {
@@ -188,8 +168,21 @@ public class ApartmentSimulator {
             // TODO: Smth smth GUI
         }
         double utilityUsage = 0.0;
-        for (Resident resident : complex.getAllResidents()) utilityUsage += resident.calculateUtilityUsage(referenceData.getBaselineUsage());
-        recordMonth(averageSatisfaction, moveOuts, utilityUsage);
+        for (Resident resident : complex.getAllResidents())
+            utilityUsage += resident.calculateUtilityUsage(referenceData.getBaselineUsage());
+        MonthlyRecord record = recordMonth(averageSatisfaction, moveOuts, utilityUsage);
+        int totalMonths = simState.getTotalMonths();
+        String[] amenityNames = new String[complex.getAmenities().size()];
+        String[] amenityStatuses = new String[complex.getAmenities().size()];
+        for (int i = 0; i < complex.getAmenities().size(); i++) {
+            amenityNames[i] = complex.getAmenities().get(i).getName();
+            amenityStatuses[i] = complex.getAmenities().get(i).getCurrentStatus();
+        }
+        String[][] amenityInfo = new String[][]{amenityNames, amenityStatuses};
+        int capacity = calculateResidentCapacity();
+        SwingUtilities.invokeLater(() -> {
+            guiController.handleMonthCompleted(record, totalMonths, amenityInfo, capacity, rent, operatingCost);
+        });
     }
 
     private void evaluateAmenities() {
@@ -244,11 +237,12 @@ public class ApartmentSimulator {
 
     private void processMoveIns(double apartmentQualityScore, double rent) throws CapacityExceededException {
         int vacantCount = countVacantSpaces();
+        vacantCount = random.nextInt(0, vacantCount);
         ArrayList<Resident> moveIns = residentGenerator.generateMoveIns(vacantCount, apartmentQualityScore, rent, simState.getFirstMonthRent(), random);
         for (Resident resident : moveIns) complex.placeResident(resident, random);
     }
 
-    private void recordMonth(double averageSatisfaction, int movedOut, double utilityUsage) {
+    private MonthlyRecord recordMonth(double averageSatisfaction, int movedOut, double utilityUsage) {
         int monthNumber = simState.getCurrentMonth();
         int totalResidents = complex.getAllResidents().size();
         int occupiedSingles = complex.countOccupiedApartments(1);
@@ -257,6 +251,7 @@ public class ApartmentSimulator {
         simState.addMonthlyRecord(monthlyRecord);
         simState.addMovedOut(movedOut);
         simState.addUtilityUsage(utilityUsage);
+        return monthlyRecord;
     }
 
     private int countVacantSpaces() {
@@ -276,5 +271,9 @@ public class ApartmentSimulator {
 
     public String getComplexName() {
         return complex.getComplexName();
+    }
+
+    public void sleep(int duration) throws InterruptedException {
+        Thread.sleep(duration);
     }
 }

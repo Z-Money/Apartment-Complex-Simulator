@@ -434,6 +434,7 @@ public class ImportPanel extends JPanel {
         String apartmentType = apartmentTypeBox.getSelectedIndex() == 0 ? "1" : "2";
         formValues.add(String.format("Apartment Type,%s", apartmentType));
         formValues.add(String.format("Initial Number of Residents,%s", initialValueField.getText()));
+        // Maybe change to only show offered amenities
         String[] amenityNames = new String[]{"Laundry Machines", "Pool", "Gym", "Security"};
         for (int i = 0; i < 4; i++) {
             if (amenityStatusBoxes.get(i).getSelectedIndex() != 0) {
