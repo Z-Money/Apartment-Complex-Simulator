@@ -380,14 +380,14 @@ public class ResultsPanel extends JPanel {
         summaryMetricLabels.get(3).setText(String.format("%.2f", results.getAverageSatisfaction()));
         summaryMetricLabels.get(4).setText(String.format("%,.0f kWh", results.getTotalUtilityUsage()));
         summaryMetricLabels.get(5).setText(String.format("%.0f%%", ((double) results.getTotalResidents() / capacity) * 100));
-        String highestTypeStr = String.join(", ", results.getHighestSatisfiedTypes());
+        String highestTypeStr = !results.getHighestSatisfiedTypes().isEmpty() ? String.join(", ", results.getHighestSatisfiedTypes()) : "None";
         highestTypeLabel.setText(highestTypeStr);
-        String lowestTypeStr = String.join(", ", results.getLowestSatisfiedTypes());
+        String lowestTypeStr = !results.getLowestSatisfiedTypes().isEmpty() ? String.join(", ", results.getLowestSatisfiedTypes()) : "None";
         lowestTypeLabel.setText(lowestTypeStr);
         for (MonthlyRecord record : results.getMonthlyRecords()) addMonthRow(record);
     }
 
-    public void setFileStatus(String resultsFileName, boolean resultsSuccess, String settingsFile, boolean settingsSuccess) {
+    public void setFileStatus(String settingsFile, boolean settingsSuccess, String resultsFileName, boolean resultsSuccess) {
         resultsFileNameArea.setText(resultsFileName);
         resultsFileStatusLabel.setText(resultsSuccess ? "Results File Written" : "Error Writing File");
         styleFileNotice(resultsFileNotice, resultsFileStatusLabel,

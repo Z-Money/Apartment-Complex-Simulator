@@ -57,7 +57,7 @@ public class ApartmentComplexDatabase {
             printer.printf(generateAmenityLines(settings));
             printer.printf(generateResidentDistributionLine(settings));
             printer.close();
-            wroteFileSuccessfully = true;
+            wroteFileSuccessfully = !printer.checkError();
         } catch (NullPointerException | FileNotFoundException e) {
             wroteFileSuccessfully = false;
         }
@@ -103,7 +103,7 @@ public class ApartmentComplexDatabase {
                 printer.printf(s);
             }
             printer.close();
-            wroteFileSuccessfully = true;
+            wroteFileSuccessfully = !printer.checkError();
         } catch (NullPointerException | FileNotFoundException e) {
             wroteFileSuccessfully = false;
         }

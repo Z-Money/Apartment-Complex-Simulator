@@ -16,9 +16,9 @@ public class SimulationSettings {
     public SimulationSettings(ReferenceData referenceData) {
         this.referenceData = referenceData;
         complexName = "";
-        numberOfFloors = 0;
-        roomsPerFloor = 0;
-        apartmentType = 0;
+        numberOfFloors = -1;
+        roomsPerFloor = -1;
+        apartmentType = -1;
         initialOccupancyPercentage = 0;
         initialResidentCount = -1;
         buildingLayout = "";
@@ -43,73 +43,19 @@ public class SimulationSettings {
     }
 
     public int calculateResidentCount(int occupancyPercent, int capacity) {
-        return (int) (capacity * ( (double) occupancyPercent / 100));
+        return (int) (capacity * ((double) occupancyPercent / 100));
     }
 
-    public void setComplexName(String name) throws InvalidConfigurationException {
-        String regex = "[a-zA-Z0-9 -]+";
-        if (name.isBlank()) throw new InvalidConfigurationException("Apartment name cannot be empty.", "Complex Name");
-        else if (name.length() > referenceData.getMaximumNameLength()) throw new InvalidConfigurationException("Apartment name is too long.", "Complex Name");
-        else if (!name.matches(regex)) throw new InvalidConfigurationException("Apartment name may only have a-z, spaces, and hyphens.", "Complex Name");
-        complexName = name;
-    }
-
-    public void setNumberOfFloors(int floors) throws InvalidConfigurationException {
-        int[] limits = referenceData.getFloorLimits();
-        int min = limits[0], max = limits[1];
-        if (min <= floors && floors <= max) {
-            numberOfFloors = floors;
-        } else {
-            throw new InvalidConfigurationException("Invalid number of floors", "Number of Floors");
-        }
-    }
-
-    public void setRoomsPerFloor(int rooms) throws InvalidConfigurationException {
-        int[] limits = referenceData.getRoomLimits();
-        int min = limits[0], max = limits[1];
-        if (min <= rooms && rooms <= max) {
-            roomsPerFloor = rooms;
-        } else {
-            throw new InvalidConfigurationException("Invalid number of rooms per floor", "Rooms per Floor");
-        }
-    }
-
-    public void setApartmentType(int type) throws InvalidConfigurationException {
-        if (type == 1 || type == 2) {
-            apartmentType = type;
-        } else {
-            throw new InvalidConfigurationException("Invalid apartment type", "Apartment Type");
-        }
-    }
-
-    public void setInitialOccupancyPercentage(int initialOccupancyPercentage) throws InvalidConfigurationException {
-        if (initialOccupancyPercentage >= 0 && initialOccupancyPercentage <= 100) {
-            this.initialOccupancyPercentage = initialOccupancyPercentage;
-        } else {
-            throw new InvalidConfigurationException("Invalid initial occupancy percent", "Initial Occupancy Percent");
-        }
-    }
-
-    public void setInitialResidentCount(int count) throws InvalidConfigurationException {
-        if (count >= 1) {
-            initialResidentCount = count;
-        } else {
-            throw new InvalidConfigurationException("Invalid initial resident count", "Initial Resident Count");
-        }
-    }
-
-    public void setBuildingLayout(String buildingLayout) {
-        this.buildingLayout = buildingLayout;
-    }
-
-    public void setAmenityStatus(String name, String status) {
+    public void setAmenityStatus(String name, String status) throws InvalidConfigurationException {
         String[] validAmenityNames = referenceData.getAmenityNames();
         for (int i = 0; i < validAmenityNames.length; i++) {
             if (name.equals(validAmenityNames[i]) && !amenityNames.contains(name)) {
                 amenityNames.add(name);
                 amenityStatuses.add(status);
+                return;
             }
         }
+         throw new InvalidConfigurationException("Unknown amenity name: " + name, "Amenity");
     }
 
     public void setResidentDistributions(String[] values, ArrayList<InvalidConfigurationException> errors) throws InvalidConfigurationException {
@@ -129,7 +75,8 @@ public class SimulationSettings {
             }
         }
         if (errors.size() > previousErrors) return;
-        if (total != 100) throw new InvalidConfigurationException("Resident distributions must total 100%", "Resident Distribution");
+        if (total != 100)
+            throw new InvalidConfigurationException("Resident distributions must total 100%", "Resident Distribution");
         residentDistributions = percentages;
     }
 
@@ -147,19 +94,31 @@ public class SimulationSettings {
                     case "Occupancy Percentage" -> setInitialOccupancyPercentage(Integer.parseInt(line[1]));
                     case "Apartment Layout" -> setBuildingLayout(line[1]);
                     case "Amenity" -> setAmenityStatus(line[1], line[2]);
-                    case "Resident Distribution" ->
-                            setResidentDistributions(line, errors);
+                    case "Resident Distribution" -> setResidentDistributions(line, errors);
                     default -> throw new InvalidConfigurationException("Unknown setting in file: " + line[0], line[0]);
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 errors.add(new InvalidConfigurationException("Empty value for " + line[0].toLowerCase(), line[0]));
             } catch (NumberFormatException e) {
-                errors.add(new InvalidConfigurationException("Invalid integer value: " + line[1], line[0]));
+                errors.add(new InvalidConfigurationException("Invalid integer value: " + (line[1].isEmpty() ? "Empty" : line[1]), line[0]));
             } catch (InvalidConfigurationException e) {
                 errors.add(e);
             }
         }
+        validateResidentCount(errors);
         return errors;
+    }
+
+    private void validateResidentCount(ArrayList<InvalidConfigurationException> errors) {
+        try {
+            if (initialResidentCount != -1 && !buildingLayout.isEmpty()) {
+                int capacity = 0;
+                for (char c : buildingLayout.toCharArray()) capacity += c == 'S' ? 1 : 2;
+                setInitialResidentCountWithCapacity(initialResidentCount, capacity);
+            }
+        } catch (InvalidConfigurationException e) {
+            errors.add(e);
+        }
     }
 
     public ArrayList<InvalidConfigurationException> checkMissingValues(String[] values) {
@@ -175,7 +134,8 @@ public class SimulationSettings {
         for (int i : residentDistributions) strValues.add(String.valueOf(i));
         String[] settingNames = {"Complex Name", "Number of Floors", "Rooms per Floor", "Apartment Type", "Initial Occupancy Percentage", "Initial Number of Residents", "Building Layout", "No-Maintenance", "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
         for (int i = 0; i < strValues.size(); i++) {
-            if (strValues.get(i).equals("null") || strValues.get(i).equals("-1")) errors.add(new InvalidConfigurationException("Missing value: " + settingNames[i], settingNames[i]));
+            if (strValues.get(i).equals("") || strValues.get(i).equals("-1"))
+                errors.add(new InvalidConfigurationException("Missing value: " + settingNames[i], settingNames[i]));
         }
         return errors;
     }
@@ -184,28 +144,94 @@ public class SimulationSettings {
         return complexName;
     }
 
+    public void setComplexName(String name) throws InvalidConfigurationException {
+        String regex = "[a-zA-Z0-9 -]+";
+        if (name.isBlank()) throw new InvalidConfigurationException("Apartment name cannot be empty.", "Complex Name");
+        else if (name.length() > referenceData.getMaximumNameLength())
+            throw new InvalidConfigurationException("Apartment name is too long.", "Complex Name");
+        else if (!name.matches(regex))
+            throw new InvalidConfigurationException("Apartment name may only have a-z, spaces, and hyphens.", "Complex Name");
+        complexName = name;
+    }
+
     public int getNumberOfFloors() {
         return numberOfFloors;
+    }
+
+    public void setNumberOfFloors(int floors) throws InvalidConfigurationException {
+        int[] limits = referenceData.getFloorLimits();
+        int min = limits[0], max = limits[1];
+        if (min <= floors && floors <= max) {
+            numberOfFloors = floors;
+        } else {
+            throw new InvalidConfigurationException("Invalid number of floors", "Number of Floors");
+        }
     }
 
     public int getRoomsPerFloor() {
         return roomsPerFloor;
     }
 
+    public void setRoomsPerFloor(int rooms) throws InvalidConfigurationException {
+        int[] limits = referenceData.getRoomLimits();
+        int min = limits[0], max = limits[1];
+        if (min <= rooms && rooms <= max) {
+            roomsPerFloor = rooms;
+        } else {
+            throw new InvalidConfigurationException("Invalid number of rooms per floor", "Rooms per Floor");
+        }
+    }
+
     public int getApartmentType() {
         return apartmentType;
+    }
+
+    public void setApartmentType(int type) throws InvalidConfigurationException {
+        if (type == 1 || type == 2) {
+            apartmentType = type;
+        } else {
+            throw new InvalidConfigurationException("Invalid apartment type", "Apartment Type");
+        }
     }
 
     public int getInitialOccupancyPercentage() {
         return initialOccupancyPercentage;
     }
 
+    public void setInitialOccupancyPercentage(int initialOccupancyPercentage) throws InvalidConfigurationException {
+        if (initialOccupancyPercentage >= 0 && initialOccupancyPercentage <= 100) {
+            this.initialOccupancyPercentage = initialOccupancyPercentage;
+        } else {
+            throw new InvalidConfigurationException("Invalid initial occupancy percent", "Initial Occupancy Percent");
+        }
+    }
+
     public int getInitialResidentCount() {
         return initialResidentCount;
     }
 
+    public void setInitialResidentCount(int count) throws InvalidConfigurationException {
+        if (count >= 0) {
+            initialResidentCount = count;
+        } else {
+            throw new InvalidConfigurationException("Invalid initial resident count", "Initial Resident Count");
+        }
+    }
+
+    public void setInitialResidentCountWithCapacity(int count, int capacity) throws InvalidConfigurationException {
+        if (count >= 0 && count <= capacity) {
+            initialResidentCount = count;
+        } else {
+            throw new InvalidConfigurationException("Initial resident count larger than capacity", "Initial Resident Count");
+        }
+    }
+
     public String getBuildingLayout() {
         return buildingLayout;
+    }
+
+    public void setBuildingLayout(String layout) {
+        buildingLayout = layout;
     }
 
     public ArrayList<String> getAmenityNames() {

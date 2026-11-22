@@ -163,7 +163,7 @@ public class ApartmentSimulator {
         int rooms = simSettings.getRoomsPerFloor();
         complex = new ApartmentComplex(complexName, floors, rooms);
         int apartmentType = simSettings.getApartmentType();
-        if (simSettings.getBuildingLayout().isEmpty() || !guiController.getSelectedSetupMode().equals("import")) {
+        if (simSettings.getBuildingLayout().isBlank() || !guiController.getSelectedSetupMode().equals("import")) {
             complex.buildLayout(apartmentType, random);
             simSettings.setBuildingLayout(complex.getLayoutList());
         } else complex.setLayout(simSettings.getBuildingLayout());
@@ -265,7 +265,7 @@ public class ApartmentSimulator {
 
     private void processMoveIns(double apartmentQualityScore, double rent) throws CapacityExceededException {
         int vacantCount = countVacantSpaces();
-        vacantCount = random.nextInt(0, vacantCount);
+        vacantCount = random.nextInt(0, vacantCount + 1);
         ArrayList<Resident> moveIns = residentGenerator.generateMoveIns(vacantCount, apartmentQualityScore, rent, simState.getFirstMonthRent(), random);
         try {
             for (Resident resident : moveIns) complex.placeResident(resident, random);
@@ -308,5 +308,9 @@ public class ApartmentSimulator {
 
     public void sleep(int duration) throws InterruptedException {
         Thread.sleep(duration);
+    }
+
+    public String getComplexLayout() {
+        return complex.getLayoutList();
     }
 }

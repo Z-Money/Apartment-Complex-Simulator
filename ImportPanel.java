@@ -32,6 +32,7 @@ public class ImportPanel extends JPanel {
     private JPanel validationPanel;
     private JTextArea validationMessagesArea;
     private JFileChooser fileChooser;
+    private boolean fileLoaded;
 
     public ImportPanel(GUIController controller) {
         this.controller = controller;
@@ -124,6 +125,7 @@ public class ImportPanel extends JPanel {
         fileChooser.setCurrentDirectory(new File("."));
         fileChooser.setFileFilter(new FileNameExtensionFilter("Settings CSV (*.csv)", "csv"));
         chooseFileButton.addActionListener(e -> chooseImportFile());
+        fileLoaded = false;
     }
 
     private void chooseImportFile() {
@@ -380,6 +382,7 @@ public class ImportPanel extends JPanel {
         fileStateLabel.setText("Loaded");
         selectedFilePanel.putClientProperty("FlatLaf.style",
                 "background: #e9f7ef; arc: 20; border: 12,14,12,14,#bfe2cc,1,20");
+        fileLoaded = true;
     }
 
     public void showPreview(String[] values) {
@@ -434,7 +437,7 @@ public class ImportPanel extends JPanel {
         String apartmentType = apartmentTypeBox.getSelectedIndex() == 0 ? "1" : "2";
         formValues.add(String.format("Apartment Type,%s", apartmentType));
         formValues.add(String.format("Initial Number of Residents,%s", initialValueField.getText()));
-        // Maybe change to only show offered amenities
+        formValues.add("");
         String[] amenityNames = new String[]{"Laundry Machines", "Pool", "Gym", "Security"};
         for (int i = 0; i < 4; i++) {
             if (amenityStatusBoxes.get(i).getSelectedIndex() != 0) {
@@ -449,5 +452,9 @@ public class ImportPanel extends JPanel {
             distributionStr.append(String.format(",%s", distributionPercentage.getText()));
         formValues.add(distributionStr.toString());
         return formValues.toArray(new String[0]);
+    }
+
+    public boolean isFileLoaded() {
+        return fileLoaded;
     }
 }

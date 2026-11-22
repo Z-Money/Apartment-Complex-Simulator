@@ -18,6 +18,7 @@ public class ReviewPanel extends JPanel {
     private JLabel initialMetricTitle;
     private JLabel initialMetricValueLabel;
 
+    private ArrayList<JPanel> amenityPills;
     private ArrayList<JLabel> amenityLabels;
     private ArrayList<JLabel> distributionValueLabels;
 
@@ -45,12 +46,15 @@ public class ReviewPanel extends JPanel {
         }
         totalApartmentsValueLabel.setText(values[10]);
         capacityValueLabel.setText(values[11]);
+        for (int i = 0; i < 4; i++) amenityPills.get(i).setVisible(false);
         for (int i = 0; i < (values.length - 12) / 2; i++) {
+            amenityPills.get(i).setVisible(true);
             String[] amenityStatusArr = values[13+2*i].toLowerCase().split("_");
             for (int j = 0; j < amenityStatusArr.length; j++) amenityStatusArr[j] = amenityStatusArr[j].substring(0, 1).toUpperCase() + amenityStatusArr[j].substring(1);
             String amenityStatus = String.join(" ", amenityStatusArr);
             amenityLabels.get(i).setText(values[12+2*i] + ": " + amenityStatus);
         }
+        repaint();
     }
 
     private void buildLayout() {
@@ -135,7 +139,12 @@ public class ReviewPanel extends JPanel {
     private JPanel createPreferencesReview() {
         JPanel pills = new JPanel(new GridLayout(2, 2, 8, 8));
         pills.setOpaque(false);
-        for (JLabel label : amenityLabels) pills.add(createAmenityPill(label));
+        amenityPills = new ArrayList<>();
+        for (JLabel label : amenityLabels) {
+            JPanel pill = createAmenityPill(label);
+            pills.add(pill);
+            amenityPills.add(pill);
+        }
         JPanel grid = new JPanel(new GridLayout(2, 2, 18, 10));
         grid.setOpaque(false);
         String[] types = {"No-Maintenance", "Low-Maintenance",

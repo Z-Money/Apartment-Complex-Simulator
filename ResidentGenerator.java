@@ -19,7 +19,7 @@ public class ResidentGenerator {
         }
         if (total < count) {
             int biggestDistributionIndex = getBiggestGroupIndex(distribution);
-            distributionCounts[biggestDistributionIndex] += count % total;
+            distributionCounts[biggestDistributionIndex] += count - total;
         }
         ArrayList<Resident> initialResidents = new ArrayList<>();
         for (int i = 0; i < distributionCounts.length; i++) {

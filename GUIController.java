@@ -75,8 +75,8 @@ public class GUIController {
     }
 
     public void handleUseDefaults() {
+        app.useDefaultSetup();
         if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(app.getReviewText(), setupPanel.getRetrievedSettings())) {
-            app.useDefaultSetup();
             app.buildComplex();
             setupPanel.setRetrievedSettings(app.getReviewText());
         }
@@ -89,23 +89,13 @@ public class GUIController {
             String[] readValues = app.importSetup(fileName);
             ArrayList<InvalidConfigurationException> errors = app.applyImportSetup(readValues);
             ArrayList<String> errorStrList = new ArrayList<>();
-            for (InvalidConfigurationException e : errors) errorStrList.add(e.getMessage());
+            for (InvalidConfigurationException e : errors) errorStrList.add(e.getSettingName() + ": " + e.getMessage());
             if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(app.getReviewText(), setupPanel.getRetrievedSettings())) {
                 app.buildComplex();
                 setupPanel.setRetrievedSettings(app.getReviewText());
             }
             importPanel.showPreview(app.getReviewText());
             importPanel.showValidationStatus(errorStrList);
-            //else {
-            // Code to show review panel
-                /*if (setupPanel.getRetrievedSettings() == null || !Arrays.equals(app.getReviewText(), setupPanel.getRetrievedSettings())) {
-                    app.buildComplex();
-                    setupPanel.setRetrievedSettings(app.getReviewText());
-                }
-                reviewPanel.displayConfiguration(app.getReviewText());
-                mainWindow.showScreen("reviewPanel");*/
-
-            //}
         } catch (InvalidConfigurationException e) {
             ArrayList<String> error = new ArrayList<>();
             error.add(e.getMessage());
@@ -114,10 +104,15 @@ public class GUIController {
     }
 
     public void handleUseImportedConfiguration() {
+        if (!importPanel.isFileLoaded()) {
+            showError("General Error", "You cannot validate or proceed without first importing a file!");
+            return;
+        }
         String[] formValues = importPanel.getImportFormValues();
+        formValues[5] = String.format("Apartment Layout,%s", app.getComplexLayout());
         ArrayList<InvalidConfigurationException> errors = app.applySetup(formValues);
         ArrayList<String> errorStrList = new ArrayList<>();
-        for (InvalidConfigurationException e : errors) errorStrList.add(e.getMessage());
+        for (InvalidConfigurationException e : errors) errorStrList.add(e.getSettingName() + ": " + e.getMessage());
         if (!errors.isEmpty()) {
             importPanel.showValidationStatus(errorStrList);
         } else {
@@ -125,6 +120,7 @@ public class GUIController {
                 app.buildComplex();
                 setupPanel.setRetrievedSettings(formValues);
             }
+            importPanel.showValidationStatus(errorStrList);
             reviewPanel.displayConfiguration(app.getReviewText());
             mainWindow.showScreen("reviewPanel");
         }
@@ -162,14 +158,6 @@ public class GUIController {
         resultsPanel.displayResults(simResults, app.calculateResidentCapacity());
         resultsPanel.setFileStatus(settingFileName, settingSuccess, resultFileName, resultSuccess);
         mainWindow.showScreen("resultsPanel");
-    }
-
-    public void handleFileWriteResult(String resultsFileName, boolean resultsSuccess, String settingsFileName, boolean settingsSuccess) {
-
-    }
-
-    public void handleStartOver() {
-
     }
 
     public void handleExit() {
