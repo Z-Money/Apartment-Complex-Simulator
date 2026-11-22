@@ -105,6 +105,38 @@ public class SimulationResults {
         return monthlyRecords;
     }
 
+    public int getOccupiedSingles() {
+        return occupiedSingles;
+    }
+
+    public int getOccupiedDoubles() {
+        return occupiedDoubles;
+    }
+
+    public int getTotalResidents() {
+        return totalResidents;
+    }
+
+    public int getTotalMovedOut() {
+        return totalMovedOut;
+    }
+
+    public double getAverageSatisfaction() {
+        return averageSatisfaction;
+    }
+
+    public double getTotalUtilityUsage() {
+        return totalUtilityUsage;
+    }
+
+    public ArrayList<String> getHighestSatisfiedTypes() {
+        return highestSatisfiedTypes;
+    }
+
+    public ArrayList<String> getLowestSatisfiedTypes() {
+        return lowestSatisfiedTypes;
+    }
+
     private double calculateAverageSatisfaction() {
         double totalAvgSatisfaction = 0.0;
         for (MonthlyRecord mr : monthlyRecords) totalAvgSatisfaction += mr.getAverageSatisfaction();

@@ -20,7 +20,8 @@ public class DoubleApartment extends Apartment {
     }
 
     @Override
-    public void addResident(Resident resident) {
+    public void addResident(Resident resident) throws CapacityExceededException {
+        if (getResidentCount() >= getCapacity()) throw new CapacityExceededException("Apartment is full", getFloorNumber(), getRoomNumber());
         occupants.add(resident);
     }
 

@@ -1,6 +1,7 @@
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -104,7 +105,12 @@ public class ApartmentSimulator {
             simSettings.setInitialResidentCount(initialResidentCount);
         } else initialResidentCount = simSettings.getInitialResidentCount();
         ArrayList<Resident> initialResidents = residentGenerator.generateInitialResidents(initialResidentCount, simSettings.getResidentDistributions());
-        for (Resident resident : initialResidents) complex.placeResident(resident, random);
+        try {
+            for (Resident resident : initialResidents) complex.placeResident(resident, random);
+        } catch (CapacityExceededException e) {
+            guiController.showError("Capacity Error", e.getMessage());
+            guiController.handleExit();
+        }
     }
 
     public void runSimulation() {
@@ -113,20 +119,37 @@ public class ApartmentSimulator {
                 try {
                     sleep(4000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Thread.currentThread().interrupt();
+                    guiController.showError("Simulation Interruption", "The simulation was interrupted while running. Please run the program again.");
                 }
                 runMonth();
                 simState.advanceMonth();
             }
+            try {
+                sleep(4000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                guiController.showError("Simulation Interruption", "The simulation was interrupted while running. Please run the program again.");
+            }
+            finishSimulation();
         });
-
         simulationThread.start();
     }
 
-    public void finishSimulation(String resultsFileName, String settingsFileName) {
+    public void finishSimulation() {
+        String resultsFileName = formatFileName("results");
+        String settingsFileName = formatFileName("settings");
         simResults.compile(complex, simState, referenceData.getResidentTypes());
-        database.writeSettingsFile(settingsFileName, simSettings);
-        database.writeResultsFile(resultsFileName, simSettings, simResults);
+        boolean settingsSuccess = false, resultsSuccess = false;
+        try {
+            settingsSuccess = database.writeSettingsFile(settingsFileName, simSettings);
+            resultsSuccess = database.writeResultsFile(resultsFileName, simSettings, simResults);
+            if (!settingsSuccess) throw new IOException("Error writing settings file");
+            if (!resultsSuccess) throw new IOException("Error writing  results file");
+        } catch (IOException e) {
+            guiController.showError("File Writing Error", e.getMessage());
+        }
+        guiController.handleSimulationComplete(simResults, settingsFileName, settingsSuccess, resultsFileName, resultsSuccess);
     }
 
     public void buildComplex() {
@@ -239,7 +262,12 @@ public class ApartmentSimulator {
         int vacantCount = countVacantSpaces();
         vacantCount = random.nextInt(0, vacantCount);
         ArrayList<Resident> moveIns = residentGenerator.generateMoveIns(vacantCount, apartmentQualityScore, rent, simState.getFirstMonthRent(), random);
-        for (Resident resident : moveIns) complex.placeResident(resident, random);
+        try {
+            for (Resident resident : moveIns) complex.placeResident(resident, random);
+        } catch (CapacityExceededException e) {
+            guiController.showError("Capacity Error", e.getMessage());
+            guiController.handleExit();
+        }
     }
 
     private MonthlyRecord recordMonth(double averageSatisfaction, int movedOut, double utilityUsage) {

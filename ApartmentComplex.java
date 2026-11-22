@@ -77,8 +77,7 @@ public class ApartmentComplex {
             }
         }
         if (vacantIndexes.isEmpty())
-            throw new CapacityExceededException("All apartments are currently full", -1, -1); // TODO: Figure out how to handle no floor problems
-
+            throw new CapacityExceededException("All apartments are currently full. Program will now terminate.");
         int randIndex = random.nextInt(vacantIndexes.size());
         apartments.get(vacantIndexes.get(randIndex)).addResident(resident);
     }

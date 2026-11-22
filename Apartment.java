@@ -33,7 +33,7 @@ public abstract class Apartment {
 
     public abstract ArrayList<Resident> getResidents();
 
-    public abstract void addResident(Resident resident);
+    public abstract void addResident(Resident resident) throws CapacityExceededException;
 
     public abstract void removeResident(Resident resident);
 

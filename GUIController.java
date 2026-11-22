@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -22,12 +23,14 @@ public class GUIController {
         importPanel = new ImportPanel(this);
         reviewPanel = new ReviewPanel(this);
         simulationPanel = new SimulationPanel(this);
+        resultsPanel = new ResultsPanel(this);
 
         mainWindow.addScreen("startPanel", startPanel);
         mainWindow.addScreen("setupPanel", setupPanel);
         mainWindow.addScreen("importPanel", importPanel);
         mainWindow.addScreen("reviewPanel", reviewPanel);
         mainWindow.addScreen("simulationPanel", simulationPanel);
+        mainWindow.addScreen("resultsPanel", resultsPanel);
     }
 
     public void startGUI() {
@@ -157,14 +160,13 @@ public class GUIController {
     }
 
     public void handleStartSimulation() {
-        // TODO: Start simulation after config is shown
         try {
             simulationPanel.fillApartmentName(app.getComplexName());
             mainWindow.showScreen("simulationPanel");
             app.beginSimulation();
         } catch (CapacityExceededException | InvalidConfigurationException e) {
-            // TODO: Show dialog box reporting error and to restart the program
-            System.out.println("I dont feel too good mr stark");
+            showError("Critical Error", e.getMessage());
+            handleExit();
         }
         app.runSimulation(); // AURA
     }
@@ -177,8 +179,10 @@ public class GUIController {
         simulationPanel.addMonthRow(record);
     }
 
-    public void handleSimulationComplete(SimulationResults results) {
-
+    public void handleSimulationComplete(SimulationResults simResults, String settingFileName, boolean settingSuccess, String resultFileName, boolean resultSuccess) {
+        resultsPanel.displayResults(simResults, app.calculateResidentCapacity());
+        resultsPanel.setFileStatus(settingFileName, settingSuccess, resultFileName, resultSuccess);
+        mainWindow.showScreen("resultsPanel");
     }
 
     public void handleFileWriteResult(String resultsFileName, boolean resultsSuccess, String settingsFileName, boolean settingsSuccess) {
@@ -190,11 +194,12 @@ public class GUIController {
     }
 
     public void handleExit() {
-        // TODO: Close the program
+        mainWindow.dispose();
+        System.exit(0);
     }
 
-    public void showError(String message) {
-        // TODO: Displays error messages to user via dialog box
+    public void showError(String title, String message) {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
     public String getSelectedSetupMode() {

@@ -8,6 +8,10 @@ public class CapacityExceededException extends Exception {
         this.roomNumber = roomNumber;
     }
 
+    public CapacityExceededException(String message) {
+        super(message);
+    }
+
     public int getFloorNumber() {
         return this.floorNumber;
     }
