@@ -365,6 +365,7 @@ public class ImportPanel extends JPanel {
         button.setFont(new Font("Segoe UI", primary ? Font.BOLD : Font.PLAIN, 15));
         button.setMargin(new Insets(12, 18, 12, 18));
         button.putClientProperty("JComponent.minimumHeight", 46);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.putClientProperty("FlatLaf.style",
                 "arc: 20; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " +
                         "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " +
@@ -448,33 +449,5 @@ public class ImportPanel extends JPanel {
             distributionStr.append(String.format(",%s", distributionPercentage.getText()));
         formValues.add(distributionStr.toString());
         return formValues.toArray(new String[0]);
-    }
-
-    public JTextField getComplexNameField() {
-        return complexNameField;
-    }
-
-    public JTextField getFloorsField() {
-        return floorsField;
-    }
-
-    public JTextField getRoomsPerFloorField() {
-        return roomsPerFloorField;
-    }
-
-    public JTextField getInitialValueField() {
-        return initialValueField;
-    }
-
-    public JComboBox<String> getApartmentTypeBox() {
-        return apartmentTypeBox;
-    }
-
-    public ArrayList<JComboBox<String>> getAmenityStatusBoxes() {
-        return amenityStatusBoxes;
-    }
-
-    public ArrayList<JTextField> getDistributionFields() {
-        return distributionFields;
     }
 }

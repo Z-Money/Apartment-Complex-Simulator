@@ -225,6 +225,7 @@ public class ReviewPanel extends JPanel {
         button.setFont(new Font("Segoe UI", primary ? Font.BOLD : Font.PLAIN, 15));
         button.setMargin(new Insets(12, 18, 12, 18));
         button.putClientProperty("JComponent.minimumHeight", 48);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.putClientProperty("FlatLaf.style",
                 "arc: 20; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " +
                         "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " +
