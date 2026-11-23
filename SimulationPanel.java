@@ -7,8 +7,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 public class SimulationPanel extends JPanel {
-    private GUIController controller;
-
     private JLabel complexNameLabel;
     private JLabel monthLabel;
     private JLabel progressPercentLabel;
@@ -29,8 +27,7 @@ public class SimulationPanel extends JPanel {
     private JLabel operatingCostLabel;
     private JLabel movedOutLabel;
 
-    public SimulationPanel(GUIController controller) {
-        this.controller = controller;
+    public SimulationPanel() {
         buildLayout();
     }
 

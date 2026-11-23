@@ -21,7 +21,7 @@ public class GUIController {
         setupPanel = new SetupPanel(this);
         importPanel = new ImportPanel(this);
         reviewPanel = new ReviewPanel(this);
-        simulationPanel = new SimulationPanel(this);
+        simulationPanel = new SimulationPanel();
         resultsPanel = new ResultsPanel(this);
 
         mainWindow.addScreen("startPanel", startPanel);
@@ -146,11 +146,11 @@ public class GUIController {
         app.runSimulation(); // AURA
     }
 
-    public void handleMonthCompleted(MonthlyRecord record, int totalMonths, String[][] amenityInfo, int capacity, double rent, double operatingCost) {
+    public void handleMonthCompleted(MonthlyRecord record, int totalMonths, String[][] amenityInfo, int capacity, double rent, double operatingCost, double qualityScore) {
         simulationPanel.updateProgress(record.getMonthNumber(), totalMonths);
         simulationPanel.updateMetrics(record.getTotalResidents(), capacity, rent, record.getAverageSatisfaction());
         simulationPanel.updateAmenityStatuses(amenityInfo[0], amenityInfo[1]);
-        simulationPanel.updateMonthlySummary(record.getAverageSatisfaction(), operatingCost, record.getResidentsMovedOut());
+        simulationPanel.updateMonthlySummary(qualityScore, operatingCost, record.getResidentsMovedOut());
         simulationPanel.addMonthRow(record);
     }
 

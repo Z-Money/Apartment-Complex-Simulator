@@ -216,7 +216,7 @@ public class ReviewPanel extends JPanel {
         text.setOpaque(false);
         text.add(reviewLabel("Automatic 12-month run", 17, true), BorderLayout.NORTH);
         text.add(reviewLabel(
-                "No additional input is required while the simulation is running.",
+                "No input is needed while the simulation is running.",
                 13, false), BorderLayout.CENTER);
         styleReviewButton(editButton, false);
         styleReviewButton(startButton, true);

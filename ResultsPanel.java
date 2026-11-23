@@ -30,10 +30,10 @@ public class ResultsPanel extends JPanel {
     public ResultsPanel(GUIController controller) {
         this.controller = controller;
         buildLayout();
-        addButtonFuns();
+        addButtonFunc();
     }
 
-    private void addButtonFuns() {
+    private void addButtonFunc() {
         exitButton.addActionListener(e -> controller.handleExit());
     }
 
@@ -94,7 +94,6 @@ public class ResultsPanel extends JPanel {
         c.weightx = 0.64;
         c.insets = new Insets(0, 0, 0, 6);
         body.add(left, c);
-
         c.gridx = 1;
         c.weightx = 0.36;
         c.insets = new Insets(0, 6, 0, 0);

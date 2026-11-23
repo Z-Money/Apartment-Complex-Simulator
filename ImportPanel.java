@@ -73,7 +73,7 @@ public class ImportPanel extends JPanel {
         backButton = new JButton("Back");
         selectedFileLabel = importLabel("No file selected", 14, true);
         fileDetailsLabel = importLabel("Choose a settings CSV to begin.", 12, false);
-        fileStateLabel = importLabel("Waiting", 12, false);
+        fileStateLabel = importLabel("Not Loaded", 12, false);
         statusLabel = importLabel("Awaiting validation", 15, true);
         initialSettingLabel = importLabel("INITIAL RESIDENTS", 12, true);
         capacityLabel = importLabel("Capacity: -", 12, false);
@@ -91,9 +91,7 @@ public class ImportPanel extends JPanel {
     }
 
     private JComboBox<String> createApartmentTypeBox() {
-        JComboBox<String> box = new JComboBox<>(new String[]{
-                "1 - Singles only", "2 - Randomized Singles & Doubles"
-        });
+        JComboBox<String> box = new JComboBox<>(new String[]{"1 - Singles only", "2 - Randomized Singles & Doubles"});
         box.setEditable(false);
         box.setSelectedIndex(-1);
         styleImportInput(box);
@@ -105,8 +103,7 @@ public class ImportPanel extends JPanel {
                 {"Not Offered", "Full Operation", "Half Operation", "Closed"},
                 {"Not Offered", "Full Operation", "Closed"},
                 {"Not Offered", "Full Operation", "Reduced Machines", "Closed"},
-                {"Not Offered", "Full Operation", "Reduced Force", "Not Functioning"}
-        };
+                {"Not Offered", "Full Operation", "Reduced Force", "Not Functioning"}};
         amenityStatusBoxes = new ArrayList<>();
         for (String[] statuses : options) {
             JComboBox<String> box = new JComboBox<>(statuses);
@@ -139,9 +136,7 @@ public class ImportPanel extends JPanel {
         JPanel header = new JPanel(new BorderLayout(0, 7));
         header.setOpaque(false);
         header.add(importLabel("Import Configuration File", 26, true), BorderLayout.NORTH);
-        header.add(importLabel(
-                "Select a settings CSV previously exported by the simulator.",
-                15, false), BorderLayout.CENTER);
+        header.add(importLabel("Select a settings CSV previously exported by the simulator.", 15, false), BorderLayout.CENTER);
         return header;
     }
 
@@ -166,8 +161,7 @@ public class ImportPanel extends JPanel {
 
     private JPanel createSelectedFilePanel() {
         selectedFilePanel = new JPanel(new BorderLayout(12, 0));
-        selectedFilePanel.putClientProperty("FlatLaf.style",
-                "background: #f0f3f7; arc: 20; border: 12,14,12,14,#dce0e5,1,20");
+        selectedFilePanel.putClientProperty("FlatLaf.style", "background: #f0f3f7; arc: 20; border: 12,14,12,14,#dce0e5,1,20");
         JLabel badge = importLabel("CSV", 16, true);
         badge.setForeground(new Color(0x198754));
         JPanel badgePanel = new JPanel(new BorderLayout());
@@ -203,10 +197,8 @@ public class ImportPanel extends JPanel {
             @Override
             public void paint(Graphics graphics) {
                 Graphics2D copy = (Graphics2D) graphics.create();
-                copy.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-                copy.clip(new RoundRectangle2D.Double(
-                        0, 0, getWidth(), getHeight(), 24, 24));
+                copy.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                copy.clip(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 24, 24));
                 super.paint(copy);
                 copy.dispose();
             }
@@ -221,11 +213,10 @@ public class ImportPanel extends JPanel {
         table.setBackground(Color.WHITE);
         JLabel[] titles = {importLabel("COMPLEX", 12, true), importLabel("FLOORS", 12, true),
                 importLabel("ROOMS / FLOOR", 12, true), importLabel("APARTMENT TYPE", 12, true),
-                initialSettingLabel, importLabel("AMENITIES", 12, true),
-                importLabel("DISTRIBUTION", 12, true)};
-        JComponent[] editors = {complexNameField, floorsField, roomsPerFloorField,
-                apartmentTypeBox, createInitialImportEditor(),
-                createAmenityEditors(), createDistributionEditors()};
+                initialSettingLabel, importLabel("AMENITIES", 12, true), importLabel("DISTRIBUTION",
+                12, true)};
+        JComponent[] editors = {complexNameField, floorsField, roomsPerFloorField, apartmentTypeBox,
+                createInitialImportEditor(), createAmenityEditors(), createDistributionEditors()};
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         for (int i = 0; i < titles.length; i++) {
@@ -248,9 +239,8 @@ public class ImportPanel extends JPanel {
     private JPanel importCell(JComponent component, boolean heading) {
         JPanel cell = new JPanel(new BorderLayout());
         cell.setBackground(new Color(heading ? 0xFAFBFC : 0xFFFFFF));
-        cell.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0xEDF0F2)),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        cell.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
+                new Color(0xEDF0F2)), BorderFactory.createEmptyBorder(8, 10, 8, 10)));
         cell.add(component, BorderLayout.NORTH);
         return cell;
     }
@@ -282,8 +272,7 @@ public class ImportPanel extends JPanel {
     private JPanel createDistributionEditors() {
         JPanel rows = new JPanel(new GridLayout(4, 1, 0, 8));
         rows.setOpaque(false);
-        String[] names = {"No-Maintenance", "Low-Maintenance",
-                "Standard-Maintenance", "High-Maintenance"};
+        String[] names = {"No-Maintenance", "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
         for (int i = 0; i < names.length; i++) {
             JPanel row = new JPanel(new BorderLayout(8, 0));
             row.setOpaque(false);
@@ -302,8 +291,7 @@ public class ImportPanel extends JPanel {
 
     private JPanel createValidationPanel() {
         validationPanel = new JPanel(new BorderLayout(0, 6));
-        validationPanel.putClientProperty("FlatLaf.style",
-                "background: #f0f3f7; arc: 20; border: 12,14,12,14,#dce0e5,1,20");
+        validationPanel.putClientProperty("FlatLaf.style", "background: #f0f3f7; arc: 20; border: 12,14,12,14,#dce0e5,1,20");
         validationMessagesArea = new JTextArea("Import a file to review or edit its values.", 3, 0);
         validationMessagesArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         validationMessagesArea.setForeground(new Color(0x6E747D));
@@ -357,9 +345,8 @@ public class ImportPanel extends JPanel {
         component.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         component.setPreferredSize(new Dimension(0, 34));
         component.setMinimumSize(new Dimension(0, 34));
-        component.putClientProperty("FlatLaf.style",
-                "arc: 10; background: #ffffff; borderColor: #dce0e5; " +
-                        "focusedBorderColor: #000000; focusWidth: 0");
+        component.putClientProperty("FlatLaf.style", "arc: 10; background: #ffffff; borderColor: #dce0e5; " +
+                "focusedBorderColor: #000000; focusWidth: 0");
     }
 
     private void styleImportButton(JButton button, boolean primary) {
@@ -368,20 +355,17 @@ public class ImportPanel extends JPanel {
         button.setMargin(new Insets(12, 18, 12, 18));
         button.putClientProperty("JComponent.minimumHeight", 46);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.putClientProperty("FlatLaf.style",
-                "arc: 20; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " +
-                        "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " +
-                        "borderColor: " + (primary ? "#315ff4" : "#dce0e5") + "; " +
-                        "focusedBorderColor: #000000; focusedBackground: " + fill + "; " +
-                        "hoverBackground: " + fill + "; pressedBackground: " + fill);
+        button.putClientProperty("FlatLaf.style", "arc: 20; focusWidth: 0; innerFocusWidth: 0; background: " +
+                fill + "; " + "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " + "borderColor: " +
+                (primary ? "#315ff4" : "#dce0e5") + "; " + "focusedBorderColor: #000000; focusedBackground: " + fill +
+                "; " + "hoverBackground: " + fill + "; pressedBackground: " + fill);
     }
 
     public void showSelectedFile(String fileName) {
         selectedFileLabel.setText(fileName);
         fileDetailsLabel.setText("Selected configuration file");
         fileStateLabel.setText("Loaded");
-        selectedFilePanel.putClientProperty("FlatLaf.style",
-                "background: #e9f7ef; arc: 20; border: 12,14,12,14,#bfe2cc,1,20");
+        selectedFilePanel.putClientProperty("FlatLaf.style", "background: #e9f7ef; arc: 20; border: 12,14,12,14,#bfe2cc,1,20");
         fileLoaded = true;
     }
 
@@ -392,24 +376,34 @@ public class ImportPanel extends JPanel {
         roomsPerFloorField.setText(values[2]);
         apartmentTypeBox.setSelectedIndex(values[3].equals("1") ? 0 : 1);
         initialValueField.setText(values[5]);
-        for (int i = 0; i < 4; i++) {
-            distributionFields.get(i).setText(values[6+i]);
-        }
+        for (int i = 0; i < 4; i++) distributionFields.get(i).setText(values[6 + i]);
         capacityLabel.setText("Capacity: " + values[11]);
-        for (JComboBox<String> box : amenityStatusBoxes) box.setSelectedIndex(0);
-        for (int i = 0; i < (values.length - 12) / 2; i++) {
-            String[] amenityStatusArr = values[13+2*i].toLowerCase().split("_");
-            for (int j = 0; j < amenityStatusArr.length; j++) amenityStatusArr[j] = amenityStatusArr[j].substring(0, 1).toUpperCase() + amenityStatusArr[j].substring(1);
-            String amenityStatus = String.join(" ", amenityStatusArr);
-            amenityStatusBoxes.get(i).setSelectedItem(amenityStatus);
+        fillImportedAmenities(values);
+    }
+
+    private void fillImportedAmenities(String[] values) {
+        String[] names = {"Laundry Machines", "Pool", "Gym", "Security"};
+        for (int i = 0; i < names.length; i++) {
+            JComboBox<String> box = amenityStatusBoxes.get(i);
+            box.setSelectedIndex(0);
+            for (int j = 12; j + 1 < values.length; j += 2) {
+                if (names[i].equals(values[j])) {
+                    for (int k = 1; k < box.getItemCount(); k++) {
+                        String option = box.getItemAt(k);
+                        option = option.replace(" ", "_");
+                        if (option.equalsIgnoreCase(values[j + 1])) {
+                            box.setSelectedIndex(k);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
     public void showValidationStatus(ArrayList<String> invalidSettings) {
         boolean valid = invalidSettings != null && invalidSettings.isEmpty();
-        String messages = valid ? "No corrections are required."
-                : invalidSettings == null ? "Validate the imported settings."
-                : String.join("\n", invalidSettings);
+        String messages = valid ? "No corrections are required." : invalidSettings == null ? "Validate the imported settings." : String.join("\n", invalidSettings);
         setValidationDisplay(valid, messages);
     }
 
@@ -417,10 +411,8 @@ public class ImportPanel extends JPanel {
         String background = valid ? "#e9f7ef" : "#fff0f1";
         String border = valid ? "#bfe2cc" : "#f0b7bc";
         Color foreground = new Color(valid ? 0x155F39 : 0x8D2028);
-        validationPanel.putClientProperty("FlatLaf.style",
-                "arc: 20; background: " + background + "; border: 12,14,12,14," + border + ",1,20");
-        statusLabel.setText(valid ? "All imported settings are valid."
-                : "Correct the following values.");
+        validationPanel.putClientProperty("FlatLaf.style", "arc: 20; background: " + background + "; border: 12,14,12,14," + border + ",1,20");
+        statusLabel.setText(valid ? "All imported settings are valid." : "Correct the following values.");
         statusLabel.setForeground(foreground);
         validationMessagesArea.setForeground(foreground);
         validationMessagesArea.setText(messages);

@@ -35,38 +35,6 @@ public class SimulationResults {
         determineExtremeTypes(residents, residentTypes);
     }
 
-    public ArrayList<String> getHighestSatisfaction(ArrayList<Resident> residents) {
-        double highestSatisfaction = residents.getFirst().getCurrentSatisfaction();
-        ArrayList<String> highestResidents = new ArrayList<>();
-        for (Resident r : residents) {
-            if (r.getCurrentSatisfaction() > highestSatisfaction) {
-                highestSatisfaction = r.getCurrentSatisfaction();
-            }
-        }
-        for (Resident r : residents) {
-            if (r.getCurrentSatisfaction() == highestSatisfaction) {
-                highestResidents.add(r.getResidentType().getTypeName());
-            }
-        }
-        return highestResidents;
-    }
-
-    public ArrayList<String> getLowestSatisfaction(ArrayList<Resident> residents) {
-        double lowestSatisfaction = residents.getFirst().getCurrentSatisfaction();
-        ArrayList<String> lowestResidents = new ArrayList<>();
-        for (Resident r : residents) {
-            if (r.getCurrentSatisfaction() < lowestSatisfaction) {
-                lowestSatisfaction = r.getCurrentSatisfaction();
-            }
-        }
-        for (Resident r : residents) {
-            if (r.getCurrentSatisfaction() == lowestSatisfaction) {
-                lowestResidents.add(r.getResidentType().getTypeName());
-            }
-        }
-        return lowestResidents;
-    }
-
     public ArrayList<String> toCsvLines() {
         ArrayList<String> csvLines = new ArrayList<>();
         csvLines.add(String.format("Occupied Single Apartments,%d%n", occupiedSingles));

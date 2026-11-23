@@ -59,10 +59,6 @@ public abstract class Amenity {
         return currentStatus;
     }
 
-    public double getChanceAtClosing() {
-        return chanceAtClosing;
-    }
-
     public double getBaseCost() {
         return baseCost;
     }

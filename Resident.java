@@ -34,10 +34,6 @@ public class Resident {
         this.noiseLevel = noiseLevel;
     }
 
-    public int getResidentId() {
-        return residentId;
-    }
-
     public ResidentType getResidentType() {
         return residentType;
     }

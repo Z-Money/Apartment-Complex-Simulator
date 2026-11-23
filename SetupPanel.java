@@ -134,9 +134,9 @@ public class SetupPanel extends JPanel {
     }
 
     public void showFieldErrors(String settingName, String message) {
-        // Find error with that settingName
-        // errors.get(), setText(message), setVisible(true)
-        String[] fieldNames = {"Complex Name", "Number of Floors", "Rooms per Floor", "Apartment Type", "Occupancy Percentage", "Laundry Machines", "Pool", "Gym", "Security", "No-Maintenance", "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
+        String[] fieldNames = {"Complex Name", "Number of Floors", "Rooms per Floor", "Apartment Type",
+                "Occupancy Percentage", "Laundry Machines", "Pool", "Gym", "Security", "No-Maintenance",
+                "Low-Maintenance", "Standard-Maintenance", "High-Maintenance"};
         if ("Resident Distribution".equals(settingName)) {
             for (int i = 9; i < 13; i++) {
                 JLabel errorLabel = errorLabels.get(i);
@@ -202,7 +202,11 @@ public class SetupPanel extends JPanel {
         amenityStatusBoxes = new ArrayList<>();
         distributionFields = new ArrayList<>();
         errorLabels = new ArrayList<>();
-        String[][] amenityStatuses = {{"Full Operation", "Half Operation", "Closed"}, {"Full Operation", "Closed"}, {"Full Operation", "Reduced Machines", "Closed"}, {"Full Operation", "Reduced Force", "Not Functioning"}};
+        String[][] amenityStatuses = {
+                {"Full Operation", "Half Operation", "Closed"},
+                {"Full Operation", "Closed"},
+                {"Full Operation", "Reduced Machines", "Closed"},
+                {"Full Operation", "Reduced Force", "Not Functioning"}};
         for (int i = 0; i < 4; i++) {
             amenityChecks.add(new JCheckBox());
             JComboBox<String> status = new JComboBox<>(amenityStatuses[i]);
@@ -235,13 +239,8 @@ public class SetupPanel extends JPanel {
         JPanel titleRow = new JPanel(new BorderLayout());
         titleRow.setOpaque(false);
         titleRow.add(setupLabel("Manual Setup", 24, true), BorderLayout.CENTER);
-//        JPanel badge = new JPanel(new BorderLayout());
-//        badge.putClientProperty("FlatLaf.style", "background: #f5f6f8; arc: 12");
-//        badge.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-//        badge.add(setupLabel("Step 1 of 3", 12, false));
-//        titleRow.add(badge, BorderLayout.EAST);
         header.add(titleRow, BorderLayout.NORTH);
-        header.add(setupLabel("Enter every value below. Capacity depends on the building layout.", 14, false), BorderLayout.CENTER);
+        header.add(setupLabel("Enter each value below, following the provided limits.", 14, false), BorderLayout.CENTER);
         return header;
     }
 
@@ -346,7 +345,6 @@ public class SetupPanel extends JPanel {
         return field;
     }
 
-    // Keep the requested width while allowing height to grow for error messages.
     private JPanel setupWidthPanel(LayoutManager layout, int width) {
         return new JPanel(layout) {
             @Override
@@ -374,7 +372,8 @@ public class SetupPanel extends JPanel {
         component.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         component.setPreferredSize(new Dimension(0, 40));
         component.setMinimumSize(new Dimension(0, 40));
-        component.putClientProperty("FlatLaf.style", "arc: 12; background: #ffffff; borderColor: #dce0e5; " + "focusedBorderColor: #000000; focusWidth: 0");
+        component.putClientProperty("FlatLaf.style", "arc: 12; background: #ffffff; borderColor: #dce0e5; " +
+                "focusedBorderColor: #000000; focusWidth: 0");
     }
 
     private JPanel createSetupActions() {
@@ -396,7 +395,10 @@ public class SetupPanel extends JPanel {
         button.setMargin(new Insets(10, 18, 10, 18));
         button.putClientProperty("JComponent.minimumHeight", 44);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.putClientProperty("FlatLaf.style", "arc: 16; focusWidth: 0; innerFocusWidth: 0; background: " + fill + "; " + "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " + "borderColor: " + (primary ? "#315ff4" : "#dce0e5") + "; " + "focusedBorderColor: #000000; focusedBackground: " + fill + "; " + "hoverBackground: " + fill + "; pressedBackground: " + fill);
+        button.putClientProperty("FlatLaf.style", "arc: 16; focusWidth: 0; innerFocusWidth: 0; background: " +
+                fill + "; " + "foreground: " + (primary ? "#ffffff" : "#20242a") + "; " + "borderColor: " +
+                (primary ? "#315ff4" : "#dce0e5") + "; " + "focusedBorderColor: #000000; focusedBackground: " + fill +
+                "; " + "hoverBackground: " + fill + "; pressedBackground: " + fill);
     }
 
     public String[] getRetrievedSettings() {

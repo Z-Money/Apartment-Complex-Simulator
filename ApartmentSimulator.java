@@ -21,7 +21,7 @@ public class ApartmentSimulator {
         database = new ApartmentComplexDatabase();
         random = new Random();
         try {
-            referenceData = database.readReferenceData("referenceData.csv"); // Temp hardcode until GUI passes file path
+            referenceData = database.readReferenceData("referenceData.csv");
         } catch (InvalidConfigurationException e) {
             guiController.showError("Reference Data Error", String.format("Critical error. %s Program will now end.", e.getMessage()));
             guiController.handleExit();
@@ -209,7 +209,7 @@ public class ApartmentSimulator {
         String[][] amenityInfo = new String[][]{amenityNames, amenityStatuses};
         int capacity = calculateResidentCapacity();
         SwingUtilities.invokeLater(() -> {
-            guiController.handleMonthCompleted(record, totalMonths, amenityInfo, capacity, rent, operatingCost);
+            guiController.handleMonthCompleted(record, totalMonths, amenityInfo, capacity, rent, operatingCost, qualityScore);
         });
     }
 

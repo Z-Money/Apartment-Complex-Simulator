@@ -37,10 +37,6 @@ public class SimulationState {
         totalMonths += 1;
     }
 
-    public boolean isSimulationComplete() {
-        return totalMonths == 12;
-    }
-
     public int getCurrentMonth() {
         return currentMonth;
     }

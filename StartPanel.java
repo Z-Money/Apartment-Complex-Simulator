@@ -12,11 +12,14 @@ public class StartPanel extends JPanel  {
         manualButton = new JButton("Create Configuration");
         defaultButton = new JButton("Use Default Settings");
         importButton = new JButton("Choose Configuration File");
+        buildLayout();
+        addButtonFunc();
+    }
 
+    private void addButtonFunc() {
         manualButton.addActionListener(e -> controller.handleSetupModeSelected("manual"));
         defaultButton.addActionListener(e -> controller.handleSetupModeSelected("default"));
         importButton.addActionListener(e -> controller.handleSetupModeSelected("import"));
-        buildLayout();
     }
 
     private void buildLayout() {
@@ -65,15 +68,15 @@ public class StartPanel extends JPanel  {
                 "Choose Configuration File", false, font);
         options.add(createStartOption(
                 "Default Setup",
-                "Use the source-defined defaults and review the configuration before running.",
+                "Get started with default program settings.",
                 defaultButton, font));
         options.add(createStartOption(
                 "Manual Setup",
-                "Enter the building layout, initial residents, amenities, and resident distribution.",
+                "Enter all settings manually.",
                 manualButton, font));
         options.add(createStartOption(
                 "Import Configuration",
-                "Load a previously exported settings CSV and validate every imported value.",
+                "Load a previously exported settings CSV file.",
                 importButton, font));
         return options;
     }

@@ -41,32 +41,6 @@ public class ReferenceData {
         defaultDistribution = new int[4];
     }
 
-    public ReferenceData(double baseCost, double baselineUsage, String[] utilityNames, double[] utilityPrices,
-                         ArrayList<ResidentType> residentTypes, String[] amenityNames, double[] amenityChances,
-                         double[] amenityQualityContributions, double[] amenityCosts, int[] floorLimits,
-                         int[] roomLimits, int maximumNameLength, int defaultFloors, int defaultRoomsPerFloor,
-                         int defaultApartmentType, int defaultOccupancyPercent, String defaultComplexName,
-                         int[] defaultDistribution) {
-        this.baseCost = baseCost;
-        this.baselineUsage = baselineUsage;
-        this.utilityNames = utilityNames;
-        this.utilityPrices = utilityPrices;
-        this.residentTypes = residentTypes;
-        this.amenityNames = amenityNames;
-        this.amenityChances = amenityChances;
-        this.amenityQualityContributions = amenityQualityContributions;
-        this.amenityCosts = amenityCosts;
-        this.floorLimits = floorLimits;
-        this.roomLimits = roomLimits;
-        this.maximumNameLength = maximumNameLength;
-        this.defaultFloors = defaultFloors;
-        this.defaultRoomsPerFloor = defaultRoomsPerFloor;
-        this.defaultApartmentType = defaultApartmentType;
-        this.defaultOccupancyPercent = defaultOccupancyPercent;
-        this.defaultComplexName = defaultComplexName;
-        this.defaultDistribution = defaultDistribution;
-    }
-
     public void loadFromLines(String[] line, int amenityIndex, int utilityIndex) throws InvalidConfigurationException {
         switch (line[0]) {
             case "BaseCost" -> baseCost = Double.parseDouble(line[1]);
@@ -164,26 +138,6 @@ public class ReferenceData {
             }
         }
         return pos;
-    }
-
-    public ResidentType findResidentType(String typeName) {
-        ResidentType resType = null;
-        for (int i = 0; i < residentTypes.size(); i++) {
-            if (residentTypes.get(i).getTypeName().equals(typeName)) {
-                resType = residentTypes.get(i);
-            }
-        }
-        return resType;
-    }
-
-    public double getUtilityPrice(String utilityName) {
-        double price = -1;
-        for (int i = 0; i < utilityNames.length; i++) {
-            if (utilityNames[i].equals(utilityName)) {
-                price = utilityPrices[i];
-            }
-        }
-        return price;
     }
 
     public double getBaseCost() {
