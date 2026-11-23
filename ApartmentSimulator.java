@@ -92,7 +92,7 @@ public class ApartmentSimulator {
     public ArrayList<InvalidConfigurationException> applyImportSetup(String[] setupLines) {
         SimulationSettings candidate = new SimulationSettings(referenceData);
         ArrayList<InvalidConfigurationException> invalidSettings = candidate.applyImportedValues(setupLines);
-        for (InvalidConfigurationException e : candidate.checkMissingValues(setupLines)) invalidSettings.add(e);
+        for (InvalidConfigurationException e : candidate.checkMissingValues()) invalidSettings.add(e);
         simSettings = candidate;
         return invalidSettings;
     }
@@ -109,7 +109,7 @@ public class ApartmentSimulator {
         try {
             for (Resident resident : initialResidents) complex.placeResident(resident, random);
         } catch (CapacityExceededException e) {
-            guiController.showError("Capacity Error", e.getMessage());
+            guiController.showError("Capacity Error", String.format("%s, Floor: %d, Room: %d", e.getMessage(), e.getFloorNumber(), e.getRoomNumber()));
             guiController.handleExit();
         }
     }
@@ -243,7 +243,7 @@ public class ApartmentSimulator {
     private double calculateRentPerResident(double operatingCost) {
         double rentPerResident = 0.0;
         if (!complex.getAllResidents().isEmpty()) {
-            rentPerResident = calculateOperatingCost() / complex.getAllResidents().size();
+            rentPerResident = operatingCost / complex.getAllResidents().size();
         }
         return rentPerResident;
     }
@@ -270,7 +270,7 @@ public class ApartmentSimulator {
         try {
             for (Resident resident : moveIns) complex.placeResident(resident, random);
         } catch (CapacityExceededException e) {
-            guiController.showError("Capacity Error", e.getMessage());
+            guiController.showError("Capacity Error", String.format("%s, Floor: %d, Room: %d", e.getMessage(), e.getFloorNumber(), e.getRoomNumber()));
             guiController.handleExit();
         }
     }

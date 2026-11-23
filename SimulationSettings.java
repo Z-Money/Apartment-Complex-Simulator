@@ -121,7 +121,7 @@ public class SimulationSettings {
         }
     }
 
-    public ArrayList<InvalidConfigurationException> checkMissingValues(String[] values) {
+    public ArrayList<InvalidConfigurationException> checkMissingValues() {
         ArrayList<InvalidConfigurationException> errors = new ArrayList<>();
         ArrayList<String> strValues = new ArrayList<>();
         strValues.add(String.valueOf(complexName));
@@ -202,7 +202,7 @@ public class SimulationSettings {
         if (initialOccupancyPercentage >= 0 && initialOccupancyPercentage <= 100) {
             this.initialOccupancyPercentage = initialOccupancyPercentage;
         } else {
-            throw new InvalidConfigurationException("Invalid initial occupancy percent", "Initial Occupancy Percent");
+            throw new InvalidConfigurationException("Invalid initial occupancy percent", "Occupancy Percentage");
         }
     }
 

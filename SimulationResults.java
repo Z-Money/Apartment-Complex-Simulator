@@ -60,10 +60,6 @@ public class SimulationResults {
                 monthlyRecord.getResidentsMovedOut(), monthlyRecord.getUtilityUsage());
     }
 
-    public String getComplexName() {
-        return complexName;
-    }
-
     public ArrayList<MonthlyRecord> getMonthlyRecords() {
         return monthlyRecords;
     }

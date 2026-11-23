@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 public class DoubleApartment extends Apartment {
     private ArrayList<Resident> occupants;
-    private int maximumOccupants;
 
     public DoubleApartment(int floorNumber, int roomNumber) {
         super(floorNumber, roomNumber);
